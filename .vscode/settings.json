@@ -10,6 +10,7 @@
     "Konva",
     "multilabel",
     "oldvis",
+    "onelabeler",
     "persistedstate",
     "phash",
     "pinia",
