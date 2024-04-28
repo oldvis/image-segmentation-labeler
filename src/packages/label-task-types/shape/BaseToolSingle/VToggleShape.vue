@@ -1,7 +1,17 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
-import type { PropType } from 'vue'
+<script setup lang="ts">
 import { ToolType } from '../stores/toolbar'
+
+defineProps({
+  value: {
+    type: String as PropType<ToolType>,
+    required: true,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+})
+const emit = defineEmits(['update:value'])
 
 const btns = [
   {
@@ -25,38 +35,18 @@ const btns = [
     value: ToolType.DragCreatePolygon,
   },
 ]
-
-export default defineComponent({
-  name: 'VToggleShape',
-  props: {
-    value: {
-      type: String as PropType<ToolType>,
-      required: true,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: {
-    'update:value': null,
-  },
-  data() {
-    return { btns }
-  },
-})
 </script>
 
 <template>
-  <div class="flex gap-1" role="group">
+  <div class="flex gap-1">
     <button
       v-for="btn in btns"
       :key="btn.value"
+      icon-btn
       :title="btn.title"
       :disabled="disabled"
-      class="icon-btn"
       :class="value === btn.value ? 'selected' : 'opacity-50'"
-      @click="$emit('update:value', btn.value)"
+      @click="emit('update:value', btn.value)"
     >
       <div :class="btn.icon" />
     </button>

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { PropType } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 
 const { value, options } = defineProps({
