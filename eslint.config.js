@@ -4,7 +4,7 @@ export default antfu(
   {
     vue: true,
     typescript: true,
-    ignores: ['src/**/*.json', 'shims.d.ts'],
+    ignores: ['src/**/*.json', 'shims.d.ts', 'onelabeler.d.ts'],
   },
   {
     files: ['src/**/*.vue', 'src/**/*.ts'],
