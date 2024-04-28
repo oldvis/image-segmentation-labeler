@@ -2,30 +2,26 @@ import Konva from 'konva'
 import type { IEditableShape } from './types'
 
 export interface IEditableCircle extends IEditableShape {
-  /** Get circle center point. */
-  point(): { x: number; y: number }
-  /** Set circle center point. */
-  point(value: { x: number; y: number }): this
+  /** Get/Set circle center point. */
+  point: (() => { x: number, y: number }) & ((value: { x: number, y: number }) => this)
 
-  /** Get whether the circle is editable. */
-  editable(): boolean
-  /** Set whether the circle is editable. */
-  editable(value: boolean): this
+  /** Get/Set whether the circle is editable. */
+  editable: (() => boolean) & ((value: boolean) => this)
 
   /** Set the circle to be in the editing state. */
-  startEdit(): void
+  startEdit: () => void
 
   /** Set the circle to be not in the editing state. */
-  endEdit(): void
+  endEdit: () => void
 
   /** Get the circle object. */
-  getNode(): Konva.Circle
+  getNode: () => Konva.Circle
 
   /** Set the callback when the circle position is updated. */
-  setOnUpdatePosition(value: (d: IEditableCircle) => void): this
+  setOnUpdatePosition: (value: (d: IEditableCircle) => void) => this
 
   /** Set the callback when the circle is clicked. */
-  setOnClick(value: (d: IEditableCircle) => void): this
+  setOnClick: (value: (d: IEditableCircle) => void) => this
 }
 
 export default class EditableCircle implements IEditableCircle {
@@ -85,11 +81,11 @@ export default class EditableCircle implements IEditableCircle {
     circle.draggable(false)
   }
 
-  point(): { x: number; y: number }
+  point(): { x: number, y: number }
 
-  point(value: { x: number; y: number }): this
+  point(value: { x: number, y: number }): this
 
-  point(value?: { x: number; y: number }): { x: number; y: number } | this {
+  point(value?: { x: number, y: number }): { x: number, y: number } | this {
     const circle = this.#circle
     if (value === undefined) {
       return { x: circle.x(), y: circle.y() }
@@ -134,7 +130,7 @@ export default class EditableCircle implements IEditableCircle {
   }
 
   constructor(
-    point: { x: number; y: number },
+    point: { x: number, y: number },
     editable = true,
     strokeWidth = 1,
   ) {

@@ -2,36 +2,32 @@ import Konva from 'konva'
 import type { IEditableShape } from './types'
 
 export interface IEditablePolygon extends IEditableShape {
-  /** Get polygon contour points. */
-  points(): [number, number][]
-  /** Set polygon contour points. */
-  points(value: [number, number][]): this
+  /** Get/Set polygon contour points. */
+  points: (() => [number, number][]) & ((value: [number, number][]) => this)
 
-  /** Get whether the polygon is editable. */
-  editable(): boolean
-  /** Set whether the polygon is editable. */
-  editable(value: boolean): this
+  /** Get/Set whether the polygon is editable. */
+  editable: (() => boolean) & ((value: boolean) => this)
 
   /** Set the polygon to be in the editing state. */
-  startEdit(): void
+  startEdit: () => void
 
   /** Set the polygon to be not in the editing state. */
-  endEdit(): void
+  endEdit: () => void
 
   /** Get the group object. */
-  getNode(): Konva.Group
+  getNode: () => Konva.Group
 
   /** Get the polygon object. */
-  getPolygon(): Konva.Line
+  getPolygon: () => Konva.Line
 
   /** Get the anchor objects. */
-  getAnchors(): Konva.Circle[]
+  getAnchors: () => Konva.Circle[]
 
   /** Set the callback when the polygon position is updated. */
-  setOnUpdatePosition(value: (d: IEditablePolygon) => void): this
+  setOnUpdatePosition: (value: (d: IEditablePolygon) => void) => this
 
   /** Set the callback when the polygon is clicked. */
-  setOnClick(value: (d: IEditablePolygon) => void): this
+  setOnClick: (value: (d: IEditablePolygon) => void) => this
 }
 
 const toMatrix = <T>(arr: T[], width: number) => arr.reduce(
@@ -43,7 +39,8 @@ const toMatrix = <T>(arr: T[], width: number) => arr.reduce(
       rows[rows.length - 1].push(entry)
     }
     return rows
-  }, [],
+  },
+  [],
 )
 
 export default class EditablePolygon implements IEditablePolygon {

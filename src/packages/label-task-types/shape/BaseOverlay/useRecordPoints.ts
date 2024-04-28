@@ -14,7 +14,7 @@ const xyOffsetToStage = (
   stage: VueKonvaStage,
   x: number,
   y: number,
-): { x: number; y: number } => {
+): { x: number, y: number } => {
   // transform the position from unscaled mouse position (offsetX, offsetY)
   // to the position in the scaled coordinate of the canvas
   const node = getNode(stage)

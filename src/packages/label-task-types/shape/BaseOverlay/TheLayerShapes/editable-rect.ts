@@ -17,36 +17,32 @@ const getBBox = (points: [number, number][]): BBox => {
 }
 
 export interface IEditableRect extends IEditableShape {
-  /** Get rect contour points. */
-  points(): [number, number][]
-  /** Set rect contour points. */
-  points(value: [number, number][]): this
+  /** Get/Set rect contour points. */
+  points: (() => [number, number][]) & ((value: [number, number][]) => this)
 
-  /** Get whether the rect is editable. */
-  editable(): boolean
-  /** Set whether the rect is editable. */
-  editable(value: boolean): this
+  /** Get/Set whether the rect is editable. */
+  editable: (() => boolean) & ((value: boolean) => this)
 
   /** Set the rect to be in the editing state. */
-  startEdit(): void
+  startEdit: () => void
 
   /** Set the rect to be not in the editing state. */
-  endEdit(): void
+  endEdit: () => void
 
   /** Get the group object. */
-  getNode(): Konva.Group
+  getNode: () => Konva.Group
 
   /** Get the rect object. */
-  getRect(): Konva.Rect
+  getRect: () => Konva.Rect
 
   /** Get the anchor objects. */
-  getAnchors(): Record<string, Konva.Circle>
+  getAnchors: () => Record<string, Konva.Circle>
 
   /** Set the callback when the rect position is updated. */
-  setOnUpdatePosition(value: (d: IEditableRect) => void): this
+  setOnUpdatePosition: (value: (d: IEditableRect) => void) => this
 
   /** Set the callback when the rect is clicked. */
-  setOnClick(value: (d: IEditableRect) => void): this
+  setOnClick: (value: (d: IEditableRect) => void) => this
 }
 
 enum ControlPointType {
@@ -190,28 +186,44 @@ export default class EditableRect implements IEditableRect {
     const { xMin, xMax, yMin, yMax } = bbox
     const anchors: Record<ControlPointType, Konva.Circle> = {
       [ControlPointType.TopLeft]: this.buildAnchor(
-        xMin, yMin, ControlPointType.TopLeft,
+        xMin,
+        yMin,
+        ControlPointType.TopLeft,
       ),
       [ControlPointType.TopMiddle]: this.buildAnchor(
-        (xMin + xMax) / 2, yMin, ControlPointType.TopMiddle,
+        (xMin + xMax) / 2,
+        yMin,
+        ControlPointType.TopMiddle,
       ),
       [ControlPointType.TopRight]: this.buildAnchor(
-        xMax, yMin, ControlPointType.TopRight,
+        xMax,
+        yMin,
+        ControlPointType.TopRight,
       ),
       [ControlPointType.MiddleLeft]: this.buildAnchor(
-        xMin, (yMin + yMax) / 2, ControlPointType.MiddleLeft,
+        xMin,
+        (yMin + yMax) / 2,
+        ControlPointType.MiddleLeft,
       ),
       [ControlPointType.MiddleRight]: this.buildAnchor(
-        xMax, (yMin + yMax) / 2, ControlPointType.MiddleRight,
+        xMax,
+        (yMin + yMax) / 2,
+        ControlPointType.MiddleRight,
       ),
       [ControlPointType.BottomLeft]: this.buildAnchor(
-        xMin, yMax, ControlPointType.BottomLeft,
+        xMin,
+        yMax,
+        ControlPointType.BottomLeft,
       ),
       [ControlPointType.BottomMiddle]: this.buildAnchor(
-        (xMin + xMax) / 2, yMax, ControlPointType.BottomMiddle,
+        (xMin + xMax) / 2,
+        yMax,
+        ControlPointType.BottomMiddle,
       ),
       [ControlPointType.BottomRight]: this.buildAnchor(
-        xMax, yMax, ControlPointType.BottomRight,
+        xMax,
+        yMax,
+        ControlPointType.BottomRight,
       ),
     }
     return anchors

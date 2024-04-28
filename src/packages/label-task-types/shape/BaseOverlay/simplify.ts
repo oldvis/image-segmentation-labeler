@@ -80,7 +80,7 @@ const simplifyDPStep = (
     if ((index as number) - first > 1) {
       simplifyDPStep(points, first, (index as number), sqTolerance, simplified)
     }
-    simplified.push(points[(index as number)])
+    simplified.push(points[index as number])
     if (last - (index as number) > 1) {
       simplifyDPStep(points, (index as number), last, sqTolerance, simplified)
     }

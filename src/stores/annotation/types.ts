@@ -51,7 +51,7 @@ export enum Category {
   Others = 'Others',
 }
 
-export type Categories = { value: Category; tasks: AnnotationType[] }[]
+export type Categories = { value: Category, tasks: AnnotationType[] }[]
 
 export interface Annotation {
   /** The type of annotation. */
