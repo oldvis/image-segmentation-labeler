@@ -5,32 +5,23 @@ export { ShapeType } from '../shape'
 
 /**
  * The mark types.
+ * - Line: Stroked lines, often used for showing change over time.
+ * - Point: Circular points, such as dots in scatter plots.
+ * - Rect: Rectangles, as in bar charts and timelines.
+ * - Arc: Circular arcs, including pie and donut slices.
+ * - Area: Filled areas with horizontal or vertical alignment.
+ * - Geoshape: Polygons in maps.
+ * - Isotype: Icons in isotype.
+ * - Text: Text labels with configurable fonts, alignment and angle.
+ * - Others: Marks that do not belong to the defined types.
+ *
  * Basically follows [vega mark types](https://vega.github.io/vega/docs/marks/), with the following changes:
  * - removes "trail", "rule", "shape", "image", "group", "path", "symbol"
  * - rename "path" to "polygon"
  * - add "point", "geoshape" from [vega-lite mark types](https://vega.github.io/vega-lite/docs/mark.html)
  * - add "isotype" (in vega, isotype is stored as "point" with "shape" in its encoding field)
  */
-export enum MarkType {
-  /** Stroked lines, often used for showing change over time. */
-  Line = 'Line',
-  /** Circular points, such as dots in scatter plots. */
-  Point = 'Point',
-  /** Rectangles, as in bar charts and timelines. */
-  Rect = 'Rect',
-  /** Circular arcs, including pie and donut slices. */
-  Arc = 'Arc',
-  /** Filled areas with horizontal or vertical alignment. */
-  Area = 'Area',
-  /** Polygons in maps. */
-  Geoshape = 'Geoshape',
-  /** Icons in isotype. */
-  Isotype = 'Isotype',
-  /** Text labels with configurable fonts, alignment and angle. */
-  Text = 'Text',
-  /** Marks that do not belong to the defined types. */
-  Others = 'Others',
-}
+export type MarkType = 'Line' | 'Point' | 'Rect' | 'Arc' | 'Area' | 'Geoshape' | 'Isotype' | 'Text' | 'Others'
 
 /**
  * The type of measurement.

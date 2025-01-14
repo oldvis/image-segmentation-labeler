@@ -1,72 +1,56 @@
-<script lang="ts">
-import type { PropType } from 'vue'
-import type { Encode, Mark, Value } from '../types'
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import type { Encode, Mark, MarkType, SchemaType, Value } from '../types'
 import VMenu from '~/packages/VMenu/index.vue'
-import {
-  encodeChannels,
-  MeasurementType,
-  measurementTypes,
-  schemaTypes,
-} from '../types'
+import { encodeChannels, MeasurementType, measurementTypes, schemaTypes } from '../types'
 import VMenuMultiSelect from './VMenuMultiSelect.vue'
 
-export default defineComponent({
-  name: 'VLabelShapeMark',
-  components: { VMenu, VMenuMultiSelect },
-  props: {
-    mark: {
-      type: Object as PropType<Mark>,
-      required: true,
-    },
-    categories: {
-      type: Array as PropType<string[]>,
-      required: true,
-    },
+const props = defineProps({
+  mark: {
+    type: Object as PropType<Mark>,
+    required: true,
   },
-  emits: {
-    'update:markEncode': null,
-    'update:markSchema': null,
-    'update:markType': null,
-    'remove': null,
-  },
-  data() {
-    return {
-      encodeChannels,
-      measurementTypes,
-      schemaTypes,
-    }
-  },
-  methods: {
-    updateChannel(channels: string[]): void {
-      const { encode } = this.mark
-      const newValue: Encode = {}
-      channels.forEach((channel) => {
-        const value: Value = channel in encode
-          ? (encode[channel] as Value)
-          : { field: '', type: MeasurementType.Quantitative }
-        newValue[channel] = value
-      })
-      this.$emit('update:markEncode', JSON.parse(JSON.stringify(newValue)))
-    },
-    updateChannelType(channel: string, type: MeasurementType): void {
-      const newValue: Encode = JSON.parse(JSON.stringify(this.mark.encode))
-      if (newValue[channel] === undefined) {
-        throw new Error('channel undefined')
-      }
-      (newValue[channel] as Value).type = type
-      this.$emit('update:markEncode', newValue)
-    },
-    updateChannelField(channel: string, field: string): void {
-      const newValue: Encode = JSON.parse(JSON.stringify(this.mark.encode))
-      if (newValue[channel] === undefined) {
-        throw new Error('channel undefined')
-      }
-      (newValue[channel] as Value).field = field
-      this.$emit('update:markEncode', newValue)
-    },
+  categories: {
+    type: Array as PropType<string[]>,
+    required: true,
   },
 })
+
+const emit = defineEmits<{
+  (e: 'update:markEncode', value: Encode): void
+  (e: 'update:markSchema', value: SchemaType): void
+  (e: 'update:markType', value: MarkType): void
+  (e: 'remove'): void
+}>()
+
+const updateChannel = (channels: string[]): void => {
+  const { encode } = props.mark
+  const newValue: Encode = {}
+  channels.forEach((channel) => {
+    const value: Value = channel in encode
+      ? (encode[channel] as Value)
+      : { field: '', type: MeasurementType.Quantitative }
+    newValue[channel] = value
+  })
+  emit('update:markEncode', JSON.parse(JSON.stringify(newValue)))
+}
+
+const updateChannelType = (channel: string, type: MeasurementType): void => {
+  const newValue: Encode = JSON.parse(JSON.stringify(props.mark.encode))
+  if (newValue[channel] === undefined) {
+    throw new Error('channel undefined')
+  }
+  newValue[channel].type = type
+  emit('update:markEncode', newValue)
+}
+
+const updateChannelField = (channel: string, field: string): void => {
+  const newValue: Encode = JSON.parse(JSON.stringify(props.mark.encode))
+  if (newValue[channel] === undefined) {
+    throw new Error('channel undefined')
+  }
+  (newValue[channel] as Value).field = field
+  emit('update:markEncode', newValue)
+}
 </script>
 
 <template>
@@ -95,7 +79,7 @@ export default defineComponent({
       <VMenu
         :value="mark.type"
         :options="categories"
-        @update:value="$emit('update:markType', $event)"
+        @update:value="$emit('update:markType', $event as MarkType)"
       />
     </div>
     <div flex="~ col">
@@ -141,7 +125,7 @@ export default defineComponent({
           <div class="flex gap-2">
             <b>Type</b>
             <VMenu
-              :value="d?.type ?? ''"
+              :value="d?.type ?? MeasurementType.Quantitative"
               :options="measurementTypes"
               @update:value="updateChannelType(key as string, $event)"
             />

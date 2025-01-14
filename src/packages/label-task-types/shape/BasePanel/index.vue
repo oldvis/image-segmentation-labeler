@@ -1,15 +1,16 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { useAnnotations } from '../composables/annotation'
 import VLabelShape from './VLabelShape.vue'
 
-export default defineComponent({
-  name: 'BasePanel',
-  components: { VLabelShape },
-  setup() {
-    return { ...useAnnotations() }
-  },
-})
+const {
+  annotations,
+  categories,
+  categoryToColor,
+  isSelected,
+  select,
+  update,
+  remove,
+} = useAnnotations()
 </script>
 
 <template>

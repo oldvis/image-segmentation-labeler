@@ -1,42 +1,25 @@
-<script lang="ts">
+<script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { defineComponent } from 'vue'
 import VMenuCategory from '../components/VMenuCategory.vue'
 import { useAnnotations } from '../composables/annotation'
 import { useStore as useToolbarStore } from '../stores/toolbar'
 import VToggleShape from './VToggleShape.vue'
 
-export default defineComponent({
-  name: 'BaseToolSingle',
-  components: {
-    VMenuCategory,
-    VToggleShape,
-  },
-  setup() {
-    const { categories, categoryToColor } = useAnnotations()
-    const toolbarStore = useToolbarStore()
-    const { stroke, tool } = storeToRefs(toolbarStore)
+const { categories, categoryToColor } = useAnnotations()
 
-    // Select the first category as the default stroke
-    if (categories.value.length !== 0) {
-      toolbarStore.setStroke(categories.value[0])
-    }
+const toolbarStore = useToolbarStore()
+const { stroke, tool } = storeToRefs(toolbarStore)
+const { setStroke, setOperation } = toolbarStore
 
-    return {
-      categories,
-      categoryToColor,
-      stroke,
-      tool,
-      setStroke: toolbarStore.setStroke,
-      setOperation: toolbarStore.setOperation,
-    }
-  },
-})
+// Select the first category as the default stroke if available
+if (categories.value.length !== 0) {
+  setStroke(categories.value[0])
+}
 </script>
 
 <template>
   <div class="flex">
-    <!-- object shape toggle -->
+    <!-- Object shape toggle -->
     <VToggleShape
       class="px-1"
       :value="tool"
@@ -46,7 +29,7 @@ export default defineComponent({
 
     <div class="border-l border-gray-200" />
 
-    <!-- stroke color menu -->
+    <!-- Stroke color menu -->
     <VMenuCategory
       class="px-1"
       :value="stroke"

@@ -1,68 +1,41 @@
-<script lang="ts">
+<script setup lang="ts">
 import type { PropType } from 'vue'
 import type { AnnotationShape } from '../types'
-import { defineComponent } from 'vue'
 import VMenuCategory from '../components/VMenuCategory.vue'
-import { ShapeType } from '../types'
 import VLabelShapePosition from './VLabelShapePosition.vue'
 
-const getBBox = (points: [number, number][]): {
-  xMin: number
-  xMax: number
-  yMin: number
-  yMax: number
-} => {
-  const xMin = Math.min(...points.map((d) => d[0]))
-  const xMax = Math.max(...points.map((d) => d[0]))
-  const yMin = Math.min(...points.map((d) => d[1]))
-  const yMax = Math.max(...points.map((d) => d[1]))
-  return { xMin, xMax, yMin, yMax }
-}
-
-export default defineComponent({
-  name: 'VLabelShape',
-  components: { VLabelShapePosition, VMenuCategory },
-  props: {
-    annotation: {
-      type: Object as PropType<AnnotationShape>,
-      required: true,
-    },
-    categories: {
-      type: Array as PropType<string[]>,
-      required: true,
-    },
-    categoryToColor: {
-      type: Function as PropType<((category: string) => string)>,
-      required: true,
-    },
-    isSelected: {
-      type: Boolean as PropType<boolean>,
-      default: false,
-    },
+const props = defineProps({
+  annotation: {
+    type: Object as PropType<AnnotationShape>,
+    required: true,
   },
-  emits: {
-    select: null,
-    update: null,
-    remove: null,
+  categories: {
+    type: Array as PropType<string[]>,
+    required: true,
   },
-  data() {
-    return { ShapeType }
+  categoryToColor: {
+    type: Function as PropType<((category: string) => string)>,
+    required: true,
   },
-  computed: {
-    bbox() {
-      return getBBox(this.annotation.value.points)
-    },
-  },
-  methods: {
-    update(category: string): void {
-      const { annotation } = this
-      this.$emit('update', {
-        ...annotation,
-        value: { ...annotation.value, category },
-      })
-    },
+  isSelected: {
+    type: Boolean as PropType<boolean>,
+    default: false,
   },
 })
+
+const emit = defineEmits<{
+  (e: 'select', annotation: AnnotationShape): void
+  (e: 'update', annotation: AnnotationShape): void
+  (e: 'remove', annotation: AnnotationShape): void
+}>()
+
+const update = (category: string): void => {
+  const { annotation } = props
+  emit('update', {
+    ...annotation,
+    value: { ...annotation.value, category },
+  })
+}
 </script>
 
 <template>

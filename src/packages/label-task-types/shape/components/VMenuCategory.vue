@@ -1,39 +1,30 @@
-<script lang="ts">
-import type { PropType } from 'vue'
+<script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
-import { defineComponent, ref } from 'vue'
 
-export default defineComponent({
-  name: 'VMenuCategory',
-  props: {
-    value: {
-      type: String as PropType<string | null>,
-      required: true,
-    },
-    categories: {
-      type: Array as PropType<string[]>,
-      required: true,
-    },
-    categoryToColor: {
-      type: Function as PropType<(category: string) => string>,
-      required: true,
-    },
-    disabled: {
-      type: Boolean as PropType<boolean>,
-      default: false,
-    },
+defineProps({
+  value: {
+    type: String as PropType<string | null>,
+    required: true,
   },
-  emits: {
-    'update:value': null,
+  categories: {
+    type: Array as PropType<string[]>,
+    required: true,
   },
-  setup() {
-    const show = ref(false)
-    const menu = ref<HTMLDivElement>()
-    onClickOutside(menu, () => {
-      show.value = false
-    })
-    return { show, menu }
+  categoryToColor: {
+    type: Function as PropType<(category: string) => string>,
+    required: true,
   },
+})
+
+const emit = defineEmits<{
+  (e: 'update:value', value: string): void
+}>()
+
+const show = ref(false)
+const menu = ref<HTMLDivElement>()
+
+onClickOutside(menu, () => {
+  show.value = false
 })
 </script>
 
@@ -63,7 +54,7 @@ export default defineComponent({
           v-for="d in categories"
           :key="d"
           class="flex items-center cursor-pointer gap-1 block p-1 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-          @click="$emit('update:value', d); show = false;"
+          @click="emit('update:value', d); show = false;"
         >
           <div
             class="i-fa6-solid:square"

@@ -1,17 +1,13 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import { onClickOutside } from '@vueuse/core'
 
-const { value, options } = defineProps({
-  value: {
-    type: String as PropType<string>,
-    required: true,
-  },
-  options: {
-    type: Array as PropType<string[]>,
-    required: true,
-  },
-})
-const emit = defineEmits(['update:value'])
+const { value, options } = defineProps<{
+  value: T
+  options: T[]
+}>()
+const emit = defineEmits<{
+  (e: 'update:value', value: T): void
+}>()
 const show = ref(false)
 const menu = ref<HTMLDivElement>()
 onClickOutside(menu, () => {

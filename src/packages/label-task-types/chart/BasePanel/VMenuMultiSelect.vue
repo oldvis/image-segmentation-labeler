@@ -1,49 +1,33 @@
-<script lang="ts">
-import type { PropType } from 'vue'
+<script setup lang="ts" generic="T">
 import { onClickOutside } from '@vueuse/core'
-import { defineComponent, ref } from 'vue'
 
-export default defineComponent({
-  name: 'VMenuMultiSelect',
-  props: {
-    value: {
-      type: Array as PropType<string[]>,
-      required: true,
-    },
-    options: {
-      type: Array as PropType<string[]>,
-      required: true,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: {
-    'update:value': null,
-  },
-  setup() {
-    const show = ref(false)
-    const menu = ref<HTMLDivElement>()
-    onClickOutside(menu, () => {
-      show.value = false
-    })
-    return { show, menu }
-  },
-  methods: {
-    toggleCategory(category: string): void {
-      const { value } = this
-      const idx = value.findIndex((d) => d === category)
-      const newValue: string[] = idx >= 0
-        ? [...value.slice(0, idx), ...value.slice(idx + 1)]
-        : [...value, category]
-      this.$emit('update:value', newValue)
-    },
-    isSelected(category: string): boolean {
-      return this.value.includes(category)
-    },
-  },
+const props = defineProps<{
+  value: T[]
+  options: T[]
+}>()
+
+const emit = defineEmits<{
+  (e: 'update:value', value: T[]): void
+}>()
+
+const show = ref(false)
+const menu = ref<HTMLDivElement>()
+
+onClickOutside(menu, () => {
+  show.value = false
 })
+
+const toggleCategory = (category: T): void => {
+  const idx = props.value.findIndex((d) => d === category)
+  const newValue: T[] = idx >= 0
+    ? [...props.value.slice(0, idx), ...props.value.slice(idx + 1)]
+    : [...props.value, category]
+  emit('update:value', newValue)
+}
+
+const isSelected = (category: T): boolean => {
+  return props.value.includes(category)
+}
 </script>
 
 <template>
@@ -63,8 +47,8 @@ export default defineComponent({
         :class="!show ? 'hidden' : ''"
       >
         <li
-          v-for="d in options"
-          :key="d"
+          v-for="(d, i) in options"
+          :key="i"
           class="flex items-center cursor-pointer gap-1 p-1"
           bg="hover:gray-100 dark:hover:gray-600"
           @click="toggleCategory(d)"

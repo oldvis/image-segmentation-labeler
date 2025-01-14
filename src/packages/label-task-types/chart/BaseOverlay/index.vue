@@ -4,7 +4,6 @@ import type { Component, PropType } from 'vue'
 import type { DataObject } from '~/stores/annotation'
 import { useElementSize, useMousePressed } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, ref, toRefs, watch } from 'vue'
 import useKeyboard from '../../shape/BaseOverlay/useKeyboard'
 import { useRecordPoint, useRecordPoints } from '../../shape/BaseOverlay/useRecordPoints'
 import useTransform from '../../shape/BaseOverlay/useTransform'
@@ -56,24 +55,38 @@ const selectedAnnotationUuids = computed(() =>
   annotations.value.filter((d) => isSelected(d)).map((d) => d.uuid),
 )
 
-useKeyboard(annotations, selectedAnnotationUuids, add, select, removeBulk)
+useKeyboard(
+  annotations,
+  selectedAnnotationUuids,
+  add,
+  select,
+  removeBulk,
+)
 
 const toolbarStore = useToolbarStore()
 const { tool, stroke } = storeToRefs(toolbarStore)
 const editable = true
 
 const stage = ref<VueKonvaStage>()
-const { points: clickedPoints, record: recordClickedPoints } = useRecordPoints(stage)
+const {
+  points: clickedPoints,
+  record: recordClickedPoints,
+} = useRecordPoints(stage)
 const { pressed } = useMousePressed()
 // Freeze the recording when mouse is not pressed.
-const { points: draggedPoints, record: recordDraggedPoints } = useRecordPoints(
+const {
+  points: draggedPoints,
+  record: recordDraggedPoints,
+} = useRecordPoints(
   stage,
   computed(() => !pressed.value),
 )
 const clickCreateMode = computed(() =>
-  (tool.value === ToolType.ClickCreatePoint
+  (
+    tool.value === ToolType.ClickCreatePoint
     || tool.value === ToolType.ClickCreateRect
-    || tool.value === ToolType.ClickCreatePolygon)
+    || tool.value === ToolType.ClickCreatePolygon
+  )
   && selectedAnnotationUuids.value.length === 0
   && stroke.value.length !== 0,
 )
@@ -117,10 +130,15 @@ const onClickStage = (e: Konva.KonvaEventObject<MouseEvent>) => {
   if (
     (isTargetStage || points.value.length >= 1)
     && clickCreateMode.value
-  ) { recordClickedPoints(e) }
+  ) {
+    recordClickedPoints(e)
+  }
 }
 
-const { point: mousePoint, record: recordMousePoint } = useRecordPoint(stage)
+const {
+  point: mousePoint,
+  record: recordMousePoint,
+} = useRecordPoint(stage)
 
 const onMouseMoveStage = (e: Konva.KonvaEventObject<MouseEvent>) => {
   if (stage.value === undefined) return

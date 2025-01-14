@@ -11,7 +11,9 @@ defineProps({
     default: false,
   },
 })
-const emit = defineEmits(['update:value'])
+const emit = defineEmits<{
+  (e: 'update:value', value: ToolType): void
+}>()
 
 const btns = [
   {

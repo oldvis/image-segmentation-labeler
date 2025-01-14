@@ -1,7 +1,16 @@
-<script lang="ts">
-import type { PropType } from 'vue'
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { ShapeType } from '../../shape'
+
+const props = defineProps({
+  points: {
+    type: Array as PropType<[number, number][]>,
+    required: true,
+  },
+  shape: {
+    type: String as PropType<ShapeType>,
+    required: true,
+  },
+})
 
 const getBBox = (points: [number, number][]): {
   xMin: number
@@ -16,27 +25,7 @@ const getBBox = (points: [number, number][]): {
   return { xMin, xMax, yMin, yMax }
 }
 
-export default defineComponent({
-  name: 'VLabelShapePosition',
-  props: {
-    points: {
-      type: Array as PropType<[number, number][]>,
-      required: true,
-    },
-    shape: {
-      type: String as PropType<ShapeType>,
-      required: true,
-    },
-  },
-  data() {
-    return { ShapeType }
-  },
-  computed: {
-    bbox() {
-      return getBBox(this.points)
-    },
-  },
-})
+const bbox = computed(() => getBBox(props.points))
 </script>
 
 <template>

@@ -1,109 +1,103 @@
-<script lang="ts">
+<script setup lang="ts">
 import type { PropType } from 'vue'
-import type { AnnotationChart, Encode, Mark, Repeat } from '../types'
-import { defineComponent } from 'vue'
-import { ShapeType } from '../../shape'
-import { MarkType, SchemaType, schemaTypes } from '../types'
+import type { AnnotationChart, Encode, Mark, MarkType, Repeat } from '../types'
+import { SchemaType } from '../types'
 import VLabelShapeMark from './VLabelShapeMark.vue'
 import VLabelShapePosition from './VLabelShapePosition.vue'
 import VLabelShapeRepeat from './VLabelShapeRepeat.vue'
 
-export default defineComponent({
-  name: 'VLabelShape',
-  components: {
-    VLabelShapeMark,
-    VLabelShapePosition,
-    VLabelShapeRepeat,
+const props = defineProps({
+  annotation: {
+    type: Object as PropType<AnnotationChart>,
+    required: true,
   },
-  props: {
-    annotation: {
-      type: Object as PropType<AnnotationChart>,
-      required: true,
-    },
-    categories: {
-      type: Array as PropType<string[]>,
-      required: true,
-    },
-    categoryToColor: {
-      type: Function as PropType<((category: string) => string)>,
-      required: true,
-    },
-    isSelected: {
-      type: Boolean as PropType<boolean>,
-      default: false,
-    },
+  categories: {
+    type: Array as PropType<string[]>,
+    required: true,
   },
-  emits: {
-    select: null,
-    update: null,
-    remove: null,
+  categoryToColor: {
+    type: Function as PropType<(category: string) => string>,
+    required: true,
   },
-  data() {
-    return {
-      ShapeType,
-      schemaTypes,
-    }
-  },
-  methods: {
-    update(categories: string[]): void {
-      const { annotation } = this
-      this.$emit('update', {
-        ...annotation,
-        value: { ...annotation.value, categories },
-      })
-    },
-    updateTitle(e: Event): void {
-      const newValue: AnnotationChart = JSON.parse(JSON.stringify(this.annotation))
-      newValue.value.chart.title = (e.target as HTMLInputElement).value
-      this.$emit('update', newValue)
-    },
-    updateTheme(e: Event): void {
-      const newValue: AnnotationChart = JSON.parse(JSON.stringify(this.annotation))
-      newValue.value.chart.theme = (e.target as HTMLInputElement).value
-      this.$emit('update', newValue)
-    },
-    updateLanguage(e: Event): void {
-      const newValue: AnnotationChart = JSON.parse(JSON.stringify(this.annotation))
-      newValue.value.chart.language = (e.target as HTMLInputElement).value
-      this.$emit('update', newValue)
-    },
-    updateMarkSchema(i: number, value: SchemaType): void {
-      const newValue: AnnotationChart = JSON.parse(JSON.stringify(this.annotation))
-      newValue.value.chart.marks[i].schema = value
-      this.$emit('update', newValue)
-    },
-    updateMarkType(i: number, value: MarkType): void {
-      const newValue: AnnotationChart = JSON.parse(JSON.stringify(this.annotation))
-      newValue.value.chart.marks[i].type = value
-      this.$emit('update', newValue)
-    },
-    updateMarkEncode(i: number, value: Encode): void {
-      const newValue: AnnotationChart = JSON.parse(JSON.stringify(this.annotation))
-      newValue.value.chart.marks[i].encode = value
-      this.$emit('update', newValue)
-    },
-    updateRepeat(repeat: Repeat): void {
-      const newValue: AnnotationChart = JSON.parse(JSON.stringify(this.annotation))
-      newValue.value.chart.repeat = repeat
-      this.$emit('update', newValue)
-    },
-    addMark(): void {
-      const newValue: AnnotationChart = JSON.parse(JSON.stringify(this.annotation))
-      const mark: Mark = {
-        schema: SchemaType.Tabular,
-        type: MarkType.Others,
-        encode: {},
-      }
-      newValue.value.chart.marks.push(mark)
-      this.$emit('update', newValue)
-    },
-    removeMark(i: number): void {
-      const newValue: AnnotationChart = JSON.parse(JSON.stringify(this.annotation))
-      newValue.value.chart.marks.splice(i, 1)
-      this.$emit('update', newValue)
-    },
+  isSelected: {
+    type: Boolean as PropType<boolean>,
+    default: false,
   },
 })
+
+const emit = defineEmits<{
+  (e: 'select', annotation: AnnotationChart): void
+  (e: 'update', annotation: AnnotationChart): void
+  (e: 'remove', annotation: AnnotationChart): void
+}>()
+
+const updateTitle = (e: Event): void => {
+  const { annotation } = props
+  const newValue: AnnotationChart = JSON.parse(JSON.stringify(annotation))
+  newValue.value.chart.title = (e.target as HTMLInputElement).value
+  emit('update', newValue)
+}
+
+const updateTheme = (e: Event): void => {
+  const { annotation } = props
+  const newValue: AnnotationChart = JSON.parse(JSON.stringify(annotation))
+  newValue.value.chart.theme = (e.target as HTMLInputElement).value
+  emit('update', newValue)
+}
+
+const updateLanguage = (e: Event): void => {
+  const { annotation } = props
+  const newValue: AnnotationChart = JSON.parse(JSON.stringify(annotation))
+  newValue.value.chart.language = (e.target as HTMLInputElement).value
+  emit('update', newValue)
+}
+
+const updateMarkSchema = (i: number, value: SchemaType): void => {
+  const { annotation } = props
+  const newValue: AnnotationChart = JSON.parse(JSON.stringify(annotation))
+  newValue.value.chart.marks[i].schema = value
+  emit('update', newValue)
+}
+
+const updateMarkType = (i: number, value: MarkType): void => {
+  const { annotation } = props
+  const newValue: AnnotationChart = JSON.parse(JSON.stringify(annotation))
+  newValue.value.chart.marks[i].type = value
+  emit('update', newValue)
+}
+
+const updateMarkEncode = (i: number, value: Encode): void => {
+  const { annotation } = props
+  const newValue: AnnotationChart = JSON.parse(JSON.stringify(annotation))
+  newValue.value.chart.marks[i].encode = value
+  emit('update', newValue)
+}
+
+const updateRepeat = (repeat: Repeat): void => {
+  const { annotation } = props
+  const newValue: AnnotationChart = JSON.parse(JSON.stringify(annotation))
+  newValue.value.chart.repeat = repeat
+  emit('update', newValue)
+}
+
+const addMark = (): void => {
+  const { annotation } = props
+  const newValue: AnnotationChart = JSON.parse(JSON.stringify(annotation))
+  const mark: Mark = {
+    schema: SchemaType.Tabular,
+    type: 'Others',
+    encode: {},
+  }
+  newValue.value.chart.marks.push(mark)
+  emit('update', newValue)
+}
+
+const removeMark = (i: number): void => {
+  const { annotation } = props
+  const newValue: AnnotationChart = JSON.parse(JSON.stringify(annotation))
+  newValue.value.chart.marks.splice(i, 1)
+  emit('update', newValue)
+}
 </script>
 
 <template>

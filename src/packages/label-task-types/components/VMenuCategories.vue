@@ -1,53 +1,34 @@
-<script lang="ts">
-import type { PropType } from 'vue'
+<script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
-import { defineComponent, ref } from 'vue'
 
-export default defineComponent({
-  name: 'VMenuCategories',
-  props: {
-    value: {
-      type: Array as PropType<string[]>,
-      required: true,
-    },
-    categories: {
-      type: Array as PropType<string[]>,
-      required: true,
-    },
-    categoryToColor: {
-      type: Function as PropType<((category: string) => string)>,
-      required: true,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: {
-    'update:value': null,
-  },
-  setup() {
-    const show = ref(false)
-    const menu = ref<HTMLDivElement>()
-    onClickOutside(menu, () => {
-      show.value = false
-    })
-    return { show, menu }
-  },
-  methods: {
-    toggleCategory(category: string): void {
-      const { value } = this
-      const idx = value.findIndex((d) => d === category)
-      const newValue: string[] = idx >= 0
-        ? [...value.slice(0, idx), ...value.slice(idx + 1)]
-        : [...value, category]
-      this.$emit('update:value', newValue)
-    },
-    isSelected(category: string): boolean {
-      return this.value.includes(category)
-    },
-  },
+const props = defineProps<{
+  value: string[]
+  categories: string[]
+  categoryToColor: (category: string) => string
+}>()
+
+const emit = defineEmits<{
+  (e: 'update:value', value: string[]): void
+}>()
+
+const show = ref(false)
+const menu = ref<HTMLDivElement>()
+
+onClickOutside(menu, () => {
+  show.value = false
 })
+
+const toggleCategory = (category: string): void => {
+  const idx = props.value.findIndex((d) => d === category)
+  const newValue: string[] = idx >= 0
+    ? [...props.value.slice(0, idx), ...props.value.slice(idx + 1)]
+    : [...props.value, category]
+  emit('update:value', newValue)
+}
+
+const isSelected = (category: string): boolean => {
+  return props.value.includes(category)
+}
 </script>
 
 <template>

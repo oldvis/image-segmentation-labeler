@@ -1,44 +1,25 @@
-<script lang="ts">
-import type { PropType } from 'vue'
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+const props = defineProps<{
+  value: string[]
+  categories: string[]
+  categoryToColor: (category: string) => string
+}>()
 
-export default defineComponent({
-  name: 'VTagCategories',
-  props: {
-    value: {
-      type: Object as PropType<string[]>,
-      required: true,
-    },
-    categories: {
-      type: Array as PropType<string[]>,
-      required: true,
-    },
-    categoryToColor: {
-      type: Function as PropType<((category: string) => string)>,
-      required: true,
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: {
-    'update:value': null,
-  },
-  methods: {
-    toggleCategory(category: string): void {
-      const { value } = this
-      const idx = value.findIndex((d) => d === category)
-      const newValue: string[] = idx >= 0
-        ? [...value.slice(0, idx), ...value.slice(idx + 1)]
-        : [...value, category]
-      this.$emit('update:value', newValue)
-    },
-    isSelected(category: string): boolean {
-      return this.value.includes(category)
-    },
-  },
-})
+const emit = defineEmits<{
+  (e: 'update:value', value: string[]): void
+}>()
+
+const toggleCategory = (category: string): void => {
+  const idx = props.value.findIndex((d) => d === category)
+  const newValue: string[] = idx >= 0
+    ? [...props.value.slice(0, idx), ...props.value.slice(idx + 1)]
+    : [...props.value, category]
+  emit('update:value', newValue)
+}
+
+const isSelected = (category: string): boolean => {
+  return props.value.includes(category)
+}
 </script>
 
 <template>
