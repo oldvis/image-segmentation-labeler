@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 import { useStore as useMessageStore } from '~/stores/message'
 import { useStore as useUserStore } from '~/stores/user'
 
-const SIGN_IN_NOTICE = 'Please sign in if you want to save name in the exported annotations.'
+const SIGN_IN_NOTICE = 'Please sign in if you want to save your name in the annotations.'
 
 /**
  * Show/Hide sign in notice
