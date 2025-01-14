@@ -1,13 +1,13 @@
-import { computed } from 'vue'
-import type { Component, Ref } from 'vue'
-import type Konva from 'konva'
 import type { MaybeRef } from '@vueuse/core'
+import type Konva from 'konva'
+import type { Component, Ref } from 'vue'
+import type { Annotation, DataObject } from '~/stores/annotation'
+import { computed } from 'vue'
 import { ToolType } from '../stores/toolbar'
 import useToolClickCreatePoint from './useToolClickCreatePoint'
-import useToolClickCreateRect from './useToolClickCreateRect'
 import useToolClickCreatePolygon from './useToolClickCreatePolygon'
+import useToolClickCreateRect from './useToolClickCreateRect'
 import useToolDragCreatePolygon from './useToolDragCreatePolygon'
-import type { Annotation, DataObject } from '~/stores/annotation'
 
 type Point = [number, number]
 type VueKonvaLayer = Component & { getNode: () => Konva.Layer }

@@ -1,11 +1,11 @@
-import { unref } from 'vue'
-import type { Ref } from 'vue'
-import type Konva from 'konva'
 import type { MaybeRef } from '@vueuse/core'
-import type { AnnotationChart } from '../../types'
+import type Konva from 'konva'
+import type { Ref } from 'vue'
 import type { IEditableShape, VueKonvaLayer } from '../../../shape/BaseOverlay/TheLayerShapes/types'
-import { buildKonvaShape, findKonvaShapes } from '../../../shape/BaseOverlay/TheLayerShapes/build-shapes'
+import type { AnnotationChart } from '../../types'
 import type { Annotation } from '~/stores/annotation'
+import { unref } from 'vue'
+import { buildKonvaShape, findKonvaShapes } from '../../../shape/BaseOverlay/TheLayerShapes/build-shapes'
 
 const useKonvaShape = (
   layer: Ref<VueKonvaLayer | undefined>,

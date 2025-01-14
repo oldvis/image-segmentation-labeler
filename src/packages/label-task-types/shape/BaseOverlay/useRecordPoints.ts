@@ -1,7 +1,7 @@
-import { ref, unref } from 'vue'
-import type { Component, Ref } from 'vue'
-import type Konva from 'konva'
 import type { MaybeRef } from '@vueuse/core'
+import type Konva from 'konva'
+import type { Component, Ref } from 'vue'
+import { ref, unref } from 'vue'
 
 type VueKonvaStage = Component & { getNode: () => Konva.Stage }
 type Point = [number, number]
@@ -35,14 +35,7 @@ export const useRecordPoints = (
   const points: Ref<Point[]> = ref([])
 
   /** Record the mouse position given the event. */
-  const record = (e: Konva.KonvaEventObject<MouseEvent> | MouseEvent) => {
-    // Note: because of vue-konva's bug, the click event is emitted twice,
-    // once as type Konva.KonvaEventObject<MouseEvent> and
-    // once as type MouseEvent.
-    // Reference: https://github.com/konvajs/vue-konva/issues/182
-    // Ignore the native MouseEvent.
-    if (!('evt' in e)) return
-
+  const record = (e: Konva.KonvaEventObject<MouseEvent>) => {
     if (stage.value === undefined || unref(freeze)) return
 
     const { offsetX, offsetY } = e.evt
@@ -63,14 +56,7 @@ export const useRecordPoint = (
   const point: Ref<Point | null> = ref(null)
 
   /** Record the mouse position given the event. */
-  const record = (e: Konva.KonvaEventObject<MouseEvent> | MouseEvent) => {
-    // Note: because of vue-konva's bug, the click event is emitted twice,
-    // once as type Konva.KonvaEventObject<MouseEvent> and
-    // once as type MouseEvent.
-    // Reference: https://github.com/konvajs/vue-konva/issues/182
-    // Ignore the native MouseEvent.
-    if (!('evt' in e)) return
-
+  const record = (e: Konva.KonvaEventObject<MouseEvent>) => {
     if (stage.value === undefined || unref(freeze)) return
 
     const { offsetX, offsetY } = e.evt

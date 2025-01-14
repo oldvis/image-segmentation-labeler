@@ -1,8 +1,8 @@
-import { computed, unref } from 'vue'
-import { storeToRefs } from 'pinia'
 import type { MaybeRef } from '@vueuse/core'
-import { useStore as useAnnotationStore } from '~/stores/annotation'
 import type { Annotation, AnnotationType } from '~/stores/annotation'
+import { storeToRefs } from 'pinia'
+import { computed, unref } from 'vue'
+import { useStore as useAnnotationStore } from '~/stores/annotation'
 
 /**
  * The wrapped annotation store that exposes

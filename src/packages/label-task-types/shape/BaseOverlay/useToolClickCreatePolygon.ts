@@ -1,11 +1,11 @@
-import { computed, unref, watch } from 'vue'
-import type { Component, Ref } from 'vue'
-import Konva from 'konva'
-import { onKeyStroke } from '@vueuse/core'
 import type { MaybeRef } from '@vueuse/core'
-import { ShapeType } from '../types'
-import { AnnotationType } from '~/stores/annotation'
+import type { Component, Ref } from 'vue'
 import type { Annotation, DataObject } from '~/stores/annotation'
+import { onKeyStroke } from '@vueuse/core'
+import Konva from 'konva'
+import { computed, unref, watch } from 'vue'
+import { AnnotationType } from '~/stores/annotation'
+import { ShapeType } from '../types'
 
 type Point = [number, number]
 type VueKonvaLayer = Component & { getNode: () => Konva.Layer }
@@ -68,7 +68,9 @@ export const useVisualEffect = (
       || mouse.value === null
       || color.value === null
       || points.value.length === 0
-    ) return null
+    ) {
+      return null
+    }
     return {
       id: ACTIVE_POLYGON_ID,
       points: [...points.value, mouse.value].flat(),
@@ -98,7 +100,9 @@ export const useVisualEffect = (
       || mouse.value === null
       || color.value === null
       || points.value.length <= 1
-    ) return null
+    ) {
+      return null
+    }
     return {
       id: ACTIVE_CLOSING_EDGE_ID,
       points: [mouse.value, points.value[0]].flat(),

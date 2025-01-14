@@ -1,13 +1,13 @@
-import { unref, watch } from 'vue'
-import type { Component, Ref } from 'vue'
-import type Konva from 'konva'
-import { useMousePressed } from '@vueuse/core'
 import type { MaybeRef } from '@vueuse/core'
+import type Konva from 'konva'
+import type { Component, Ref } from 'vue'
+import type { Annotation, DataObject } from '~/stores/annotation'
+import { useMousePressed } from '@vueuse/core'
+import { unref, watch } from 'vue'
+import { AnnotationType } from '~/stores/annotation'
 import { ShapeType } from '../types'
 import simplify from './simplify'
 import { useVisualEffect } from './useToolClickCreatePolygon'
-import { AnnotationType } from '~/stores/annotation'
-import type { Annotation, DataObject } from '~/stores/annotation'
 
 type Point = [number, number]
 type VueKonvaLayer = Component & { getNode: () => Konva.Layer }

@@ -1,12 +1,12 @@
-import { unref, watch } from 'vue'
-import type { Component, Ref } from 'vue'
-import type Konva from 'konva'
 import type { MaybeRef } from '@vueuse/core'
-import { useVisualEffect } from '../../shape/BaseOverlay/useToolClickCreateRect'
-import { ShapeType } from '../../shape'
-import { SchemaType } from '../types'
-import { AnnotationType } from '~/stores/annotation'
+import type Konva from 'konva'
+import type { Component, Ref } from 'vue'
 import type { Annotation, DataObject } from '~/stores/annotation'
+import { unref, watch } from 'vue'
+import { AnnotationType } from '~/stores/annotation'
+import { ShapeType } from '../../shape'
+import { useVisualEffect } from '../../shape/BaseOverlay/useToolClickCreateRect'
+import { SchemaType } from '../types'
 
 type Point = [number, number]
 type VueKonvaLayer = Component & { getNode: () => Konva.Layer }

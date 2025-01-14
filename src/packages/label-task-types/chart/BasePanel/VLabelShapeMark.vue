@@ -1,15 +1,15 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
+import type { Encode, Mark, Value } from '../types'
+import { defineComponent } from 'vue'
+import VMenu from '~/packages/VMenu/index.vue'
 import {
-  MeasurementType,
   encodeChannels,
+  MeasurementType,
   measurementTypes,
   schemaTypes,
 } from '../types'
-import type { Encode, Mark, Value } from '../types'
 import VMenuMultiSelect from './VMenuMultiSelect.vue'
-import VMenu from '~/packages/VMenu/index.vue'
 
 export default defineComponent({
   name: 'VLabelShapeMark',

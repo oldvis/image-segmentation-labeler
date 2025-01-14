@@ -1,10 +1,10 @@
-import { unref, watch } from 'vue'
-import type { Ref } from 'vue'
 import type { MaybeRef } from '@vueuse/core'
+import type { Ref } from 'vue'
+import type { Annotation, DataObject } from '~/stores/annotation'
+import { unref, watch } from 'vue'
+import { AnnotationType } from '~/stores/annotation'
 import { ShapeType } from '../../shape'
 import { SchemaType } from '../types'
-import type { Annotation, DataObject } from '~/stores/annotation'
-import { AnnotationType } from '~/stores/annotation'
 
 type Point = [number, number]
 

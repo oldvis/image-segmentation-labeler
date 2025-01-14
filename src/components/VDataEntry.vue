@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { dataTypeImage } from '@onelabeler/core'
 import type { DataObject } from '~/stores/annotation/types'
+import { dataTypeImage } from '@onelabeler/core'
 import { BaseOverlay } from '~/packages/label-task-types/chart'
 
 const props = defineProps({

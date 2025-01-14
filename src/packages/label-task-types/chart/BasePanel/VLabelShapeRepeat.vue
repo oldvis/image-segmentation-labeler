@@ -1,7 +1,7 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
 import type { Repeat } from '../types'
+import { defineComponent } from 'vue'
 import VMenuMultiSelect from './VMenuMultiSelect.vue'
 
 export default defineComponent({

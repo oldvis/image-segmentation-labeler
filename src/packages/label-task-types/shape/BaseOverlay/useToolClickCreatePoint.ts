@@ -1,9 +1,9 @@
-import { unref, watch } from 'vue'
-import type { Ref } from 'vue'
 import type { MaybeRef } from '@vueuse/core'
-import { ShapeType } from '../types'
+import type { Ref } from 'vue'
 import type { Annotation, DataObject } from '~/stores/annotation'
+import { unref, watch } from 'vue'
 import { AnnotationType } from '~/stores/annotation'
+import { ShapeType } from '../types'
 
 /**
  * Use the ClickCreatePoint tool.

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { StatusType, useStore as useAnnotationStore } from '~/stores/annotation'
 import type { Annotation } from '~/stores/annotation'
+import { storeToRefs } from 'pinia'
 import { saveJsonFile, uploadJsonFile } from '~/plugins/file'
+import { StatusType, useStore as useAnnotationStore } from '~/stores/annotation'
 
 const annotationStore = useAnnotationStore()
 const { annotations, statuses } = storeToRefs(annotationStore)

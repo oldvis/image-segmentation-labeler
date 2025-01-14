@@ -1,8 +1,8 @@
 import type { ComputedRef } from 'vue'
-import { computed } from 'vue'
-import { useAnnotations as useBaseAnnotations } from '../../composables/annotation'
 import type { AnnotationChart } from '../types'
+import { computed } from 'vue'
 import { AnnotationType } from '~/stores/annotation'
+import { useAnnotations as useBaseAnnotations } from '../../composables/annotation'
 
 /**
  * The wrapped annotation store that exposes

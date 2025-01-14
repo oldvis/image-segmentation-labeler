@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { Component, PropType } from 'vue'
-import { useAnnotations } from '../composables/annotation'
-import VMenuCategories from '../../components/VMenuCategories.vue'
-import VTagCategories from './VTagCategories.vue'
+import { computed } from 'vue'
 import { AnnotationType } from '~/stores/annotation'
+import VMenuCategories from '../../components/VMenuCategories.vue'
+import { useAnnotations } from '../composables/annotation'
+import VTagCategories from './VTagCategories.vue'
 
 const { disabled, component } = defineProps({
   disabled: {

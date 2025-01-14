@@ -1,11 +1,11 @@
-import { unref } from 'vue'
 import type Konva from 'konva'
 import type { AnnotationShapeLike } from '../../types'
+import type { Annotation } from '~/stores/annotation'
+import { unref } from 'vue'
 import { ShapeType } from '../../types'
 import EditableCircle from './editable-circle'
-import EditableRect from './editable-rect'
 import EditablePolygon from './editable-polygon'
-import type { Annotation } from '~/stores/annotation'
+import EditableRect from './editable-rect'
 
 const SHAPE_NAME = 'editable-shape'
 

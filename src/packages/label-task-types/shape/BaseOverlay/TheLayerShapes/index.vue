@@ -1,10 +1,10 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref, toRefs, watch } from 'vue'
 import type { PropType } from 'vue'
 import type { AnnotationShape } from '../../types'
-import useKonvaShape from './useKonvaShape'
 import type { VueKonvaLayer } from './types'
 import type { Annotation } from '~/stores/annotation'
+import { defineComponent, onMounted, ref, toRefs, watch } from 'vue'
+import useKonvaShape from './useKonvaShape'
 
 export default defineComponent({
   name: 'TheLayerShapes',

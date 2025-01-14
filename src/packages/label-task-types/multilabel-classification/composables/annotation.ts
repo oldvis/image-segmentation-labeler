@@ -1,9 +1,9 @@
-import { computed } from 'vue'
-import { storeToRefs } from 'pinia'
 import type { AnnotationMultilabelClassification } from '../types'
-import { useAnnotations as useBaseAnnotations } from '../../composables/annotation'
-import { AnnotationType, useStore as useAnnotationStore } from '~/stores/annotation'
 import type { DataObject } from '~/stores/annotation'
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
+import { AnnotationType, useStore as useAnnotationStore } from '~/stores/annotation'
+import { useAnnotations as useBaseAnnotations } from '../../composables/annotation'
 
 /**
  * The wrapped annotation store that exposes

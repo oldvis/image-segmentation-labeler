@@ -1,6 +1,6 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
+import { defineComponent } from 'vue'
 import { ShapeType } from '../../shape'
 
 const getBBox = (points: [number, number][]): {

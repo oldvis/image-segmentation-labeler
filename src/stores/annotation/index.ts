@@ -1,12 +1,12 @@
+import type { Annotation, DataObject, Status } from './types'
+import { scaleOrdinal, schemeCategory10 } from 'd3'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
-import { scaleOrdinal, schemeCategory10 } from 'd3'
-import { useStore as useUserStore } from '../user'
-import { StatusType } from './types'
-import type { Annotation, DataObject, Status } from './types'
-import { categories } from './categories'
-import rawDataObjects from '~/data/data-objects.json'
 import annotations from '~/data/annotations.json'
+import rawDataObjects from '~/data/data-objects.json'
+import { useStore as useUserStore } from '../user'
+import { categories } from './categories'
+import { StatusType } from './types'
 
 export * from './types'
 

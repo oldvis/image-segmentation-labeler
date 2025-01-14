@@ -1,18 +1,18 @@
 <script lang="ts">
-import { computed, defineComponent, ref, toRefs, watch } from 'vue'
-import type { Component, PropType } from 'vue'
-import { storeToRefs } from 'pinia'
 import type Konva from 'konva'
+import type { Component, PropType } from 'vue'
+import type { VueKonvaLayer } from './TheLayerShapes/types'
+import type { DataObject } from '~/stores/annotation'
 import { useElementSize, useMousePressed } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { computed, defineComponent, ref, toRefs, watch } from 'vue'
 import { useAnnotations } from '../composables/annotation'
 import { ToolType, useStore as useToolbarStore } from '../stores/toolbar'
-import type { VueKonvaLayer } from './TheLayerShapes/types'
 import TheLayerShapes from './TheLayerShapes/index.vue'
-import useTransform from './useTransform'
 import useKeyboard from './useKeyboard'
 import { useRecordPoint, useRecordPoints } from './useRecordPoints'
 import useTools from './useTools'
-import type { DataObject } from '~/stores/annotation'
+import useTransform from './useTransform'
 
 type VueKonvaStage = Component & { getNode: () => Konva.Stage }
 
@@ -119,12 +119,7 @@ export default defineComponent({
 
     const isLayerShapesListening = computed(() => points.value.length === 0)
 
-    const onClickStage = (e: Konva.KonvaEventObject<MouseEvent> | MouseEvent) => {
-      // Note: because of vue-konva's bug, the click event is emitted twice,
-      // once as type Konva.KonvaEventObject<MouseEvent> and
-      // once as type MouseEvent.
-      // Reference: https://github.com/konvajs/vue-konva/issues/182
-      if (!('evt' in e)) return
+    const onClickStage = (e: Konva.KonvaEventObject<MouseEvent>) => {
       if (stage.value === undefined) return
       const isTargetStage = e.target === stage.value.getNode()
 
@@ -136,7 +131,9 @@ export default defineComponent({
       if (
         (isTargetStage || points.value.length >= 1)
         && clickCreateMode.value
-      ) recordClickedPoints(e)
+      ) {
+        recordClickedPoints(e)
+      }
     }
 
     const {
@@ -144,12 +141,7 @@ export default defineComponent({
       record: recordMousePoint,
     } = useRecordPoint(stage)
 
-    const onMouseMoveStage = (e: Konva.KonvaEventObject<MouseEvent> | MouseEvent) => {
-      // Note: because of vue-konva's bug, the click event is emitted twice,
-      // once as type Konva.KonvaEventObject<MouseEvent> and
-      // once as type MouseEvent.
-      // Reference: https://github.com/konvajs/vue-konva/issues/182
-      if (!('evt' in e)) return
+    const onMouseMoveStage = (e: Konva.KonvaEventObject<MouseEvent>) => {
       if (stage.value === undefined) return
 
       recordMousePoint(e)

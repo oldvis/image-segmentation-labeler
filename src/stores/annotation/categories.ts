@@ -1,5 +1,5 @@
-import { AnnotationType, Category } from './types'
 import type { Categories } from './types'
+import { AnnotationType, Category } from './types'
 
 export const categories: Categories = [
   // Vis/Non-Vis

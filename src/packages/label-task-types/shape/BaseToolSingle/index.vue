@@ -1,9 +1,9 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useStore as useToolbarStore } from '../stores/toolbar'
-import { useAnnotations } from '../composables/annotation'
+import { defineComponent } from 'vue'
 import VMenuCategory from '../components/VMenuCategory.vue'
+import { useAnnotations } from '../composables/annotation'
+import { useStore as useToolbarStore } from '../stores/toolbar'
 import VToggleShape from './VToggleShape.vue'
 
 export default defineComponent({

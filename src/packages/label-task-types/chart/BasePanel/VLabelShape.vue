@@ -1,8 +1,8 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
-import { ShapeType } from '../../shape'
 import type { AnnotationChart, Encode, Mark, Repeat } from '../types'
+import { defineComponent } from 'vue'
+import { ShapeType } from '../../shape'
 import { MarkType, SchemaType, schemaTypes } from '../types'
 import VLabelShapeMark from './VLabelShapeMark.vue'
 import VLabelShapePosition from './VLabelShapePosition.vue'

@@ -1,9 +1,9 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
 import type { PropType } from 'vue'
-import { ShapeType } from '../types'
 import type { AnnotationShape } from '../types'
+import { defineComponent } from 'vue'
 import VMenuCategory from '../components/VMenuCategory.vue'
+import { ShapeType } from '../types'
 import VLabelShapePosition from './VLabelShapePosition.vue'
 
 const getBBox = (points: [number, number][]): {

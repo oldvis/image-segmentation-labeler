@@ -1,8 +1,8 @@
-import { ref, watch } from 'vue'
 import type { Ref } from 'vue'
-import { v4 as uuidv4 } from 'uuid'
-import { onKeyDown, useMagicKeys } from '@vueuse/core'
 import type { Annotation } from '~/stores/annotation'
+import { onKeyDown, useMagicKeys } from '@vueuse/core'
+import { v4 as uuidv4 } from 'uuid'
+import { ref, watch } from 'vue'
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 

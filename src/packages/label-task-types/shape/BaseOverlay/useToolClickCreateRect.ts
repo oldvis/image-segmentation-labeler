@@ -1,10 +1,10 @@
-import { computed, unref, watch } from 'vue'
-import type { Component, Ref } from 'vue'
-import Konva from 'konva'
 import type { MaybeRef } from '@vueuse/core'
-import { ShapeType } from '../types'
-import { AnnotationType } from '~/stores/annotation'
+import type { Component, Ref } from 'vue'
 import type { Annotation, DataObject } from '~/stores/annotation'
+import Konva from 'konva'
+import { computed, unref, watch } from 'vue'
+import { AnnotationType } from '~/stores/annotation'
+import { ShapeType } from '../types'
 
 type Point = [number, number]
 type VueKonvaLayer = Component & { getNode: () => Konva.Layer }
@@ -83,7 +83,9 @@ export const useVisualEffect = (
       || mouse.value === null
       || color.value === null
       || points.value.length !== 1
-    ) return null
+    ) {
+      return null
+    }
     const { xMin, xMax, yMin, yMax } = getBBox([points.value[0], mouse.value])
     return {
       id: ACTIVE_RECT_ID,

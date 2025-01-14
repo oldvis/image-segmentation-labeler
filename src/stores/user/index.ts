@@ -1,6 +1,6 @@
+import type { User } from './types'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { v5 as uuidv5 } from 'uuid'
-import type { User } from './types'
 import { UserType } from './types'
 
 const UUID_NAMESPACE = '00000000-0000-0000-0000-000000000000'
@@ -24,7 +24,7 @@ export const useStore = defineStore('user', {
   actions: {
     trySignIn(name: string): boolean {
       this.name = name
-      // Note: generate the same uuid when the name is unchanged
+      // Generate a uuid that is reproducible given the name.
       this.uuid = uuidv5(name, UUID_NAMESPACE)
       return true
     },

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { useStore as useToolbarStore } from '../stores/toolbar'
-import { useAnnotations } from '../composables/annotation'
 import VMenuCategories from '../../components/VMenuCategories.vue'
 import VToggleShape from '../../shape/BaseToolSingle/VToggleShape.vue'
+import { useAnnotations } from '../composables/annotation'
+import { useStore as useToolbarStore } from '../stores/toolbar'
 
 const { categories, categoryToColor } = useAnnotations()
 const toolbarStore = useToolbarStore()
