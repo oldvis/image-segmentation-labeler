@@ -1,6 +1,9 @@
 <a href="http://commitizen.github.io/cz-cli/">
     <img alt="Commitizen friendly" src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg">
 </a>
+<a href="https://pnpm.io/">
+    <img alt="maintained with pnpm" src="https://img.shields.io/badge/pnpm-F69220?logo=pnpm&logoColor=fff">
+</a>
 
 # OldVis Image Segmentation Labeler
 
