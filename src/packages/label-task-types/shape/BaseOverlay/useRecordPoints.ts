@@ -1,6 +1,5 @@
-import type { MaybeRef } from '@vueuse/core'
 import type Konva from 'konva'
-import type { Component, Ref } from 'vue'
+import type { Component, MaybeRef, Ref } from 'vue'
 import { ref, unref } from 'vue'
 
 type VueKonvaStage = Component & { getNode: () => Konva.Stage }

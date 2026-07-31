@@ -6,6 +6,17 @@ body,
   padding: 0;
 }
 
+/*
+ * Wind4 preflight sets `border: 0 solid`, which resets border-color to currentColor
+ * (black). Restore the Wind3 / @unocss/reset default (gray-200).
+ */
+*,
+::before,
+::after,
+::backdrop {
+  border-color: var(--un-default-border-color, #e5e7eb);
+}
+
 html.dark {
   background: #121212;
 }

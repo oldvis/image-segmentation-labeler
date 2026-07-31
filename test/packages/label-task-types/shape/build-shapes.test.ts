@@ -35,7 +35,7 @@ describe('buildKonvaShape', () => {
       2,
     )
 
-    for (const node of [point, rect, polygon]) {
+    for (const node of [point, rect, polygon] as Array<{ name: () => string, getAttr: (k: string) => unknown }>) {
       expect(node.name()).toBe('editable-shape')
       expect(node.getAttr('uuid')).toBe('shape-1')
       expect(node.getAttr('object')).toBeTruthy()

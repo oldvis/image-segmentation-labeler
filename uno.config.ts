@@ -3,7 +3,7 @@ import {
   presetAttributify,
   presetIcons,
   presetWebFonts,
-  presetWind3,
+  presetWind4,
 } from 'unocss'
 
 export default defineConfig({
@@ -18,7 +18,7 @@ export default defineConfig({
     ['selected', 'border-black dark:border-gray-600'],
   ],
   presets: [
-    presetWind3(),
+    presetWind4(),
     presetAttributify(),
     presetIcons({
       scale: 1.2,

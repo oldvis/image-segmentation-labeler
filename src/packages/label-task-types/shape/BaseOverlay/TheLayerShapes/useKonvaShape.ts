@@ -1,6 +1,5 @@
-import type { MaybeRef } from '@vueuse/core'
 import type Konva from 'konva'
-import type { Ref } from 'vue'
+import type { MaybeRef, Ref } from 'vue'
 import type { AnnotationShape } from '../../types'
 import type { IEditableShape, VueKonvaLayer } from './types'
 import type { Annotation } from '~/stores/annotation'

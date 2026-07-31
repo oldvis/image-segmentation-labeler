@@ -14,13 +14,13 @@ export default defineConfig({
   base: process.env.NODE_ENV === 'production' ? '/image-segmentation-labeler/' : '/',
   resolve: {
     alias: {
-      '~/': `${path.resolve(__dirname, 'src')}/`,
+      '~/': `${path.resolve(import.meta.dirname, 'src')}/`,
       // Konva's package.json points "main" at lib/index-node.js (requires the native
       // `canvas` package) and "browser" at lib/index.js (DOM). Vite's app build usually
       // honors "browser"; Vitest resolves in Node and often picks "main", so unit tests
       // that import Konva fail without the `canvas` native addon. Pin the browser entry
       // so jsdom tests can load Konva without installing `canvas`.
-      'konva': path.resolve(__dirname, 'node_modules/konva/lib/index.js'),
+      'konva': path.resolve(import.meta.dirname, 'node_modules/konva/lib/index.js'),
     },
   },
   plugins: [
@@ -67,7 +67,11 @@ export default defineConfig({
   // https://github.com/vitest-dev/vitest
   test: {
     environment: 'jsdom',
-    setupFiles: ['./test/polyfill-localstorage.ts', './test/setup.ts'],
+    setupFiles: [
+      './test/polyfill-localstorage.ts',
+      './test/polyfill-canvas.ts',
+      './test/setup.ts',
+    ],
     exclude: ['**/node_modules/**', '**/dist/**', '**/e2e/**'],
   },
 })

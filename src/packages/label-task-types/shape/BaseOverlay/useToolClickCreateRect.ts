@@ -1,5 +1,4 @@
-import type { MaybeRef } from '@vueuse/core'
-import type { Component, Ref } from 'vue'
+import type { Component, MaybeRef, Ref } from 'vue'
 import type { Annotation, DataObject } from '~/stores/annotation'
 import Konva from 'konva'
 import { computed, unref, watch } from 'vue'

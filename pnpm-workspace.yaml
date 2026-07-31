@@ -1,4 +1,29 @@
-onlyBuiltDependencies:
-  - esbuild
-  - '@parcel/watcher'
-  - vue-demi
+# pnpm 11: non-registry settings live here (not .npmrc).
+# Excludes cover lockfile packages blocked by default minimumReleaseAge / trustPolicy.
+minimumReleaseAgeExclude:
+  - '@napi-rs/wasm-runtime'
+  - '@playwright/test'
+  - playwright
+  - playwright-core
+  - '@vue/language-core'
+  - vue-tsc
+  - vue-component-type-helpers
+  - electron-to-chromium
+  - tldts
+  - tldts-core
+
+shamefullyHoist: true
+
+shellEmulator: true
+
+strictPeerDependencies: false
+
+trustPolicy: no-downgrade
+
+trustPolicyExclude:
+  - '@oxc-resolver/*'
+
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  vue-demi: true

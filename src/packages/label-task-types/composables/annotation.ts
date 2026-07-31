@@ -1,4 +1,4 @@
-import type { MaybeRef } from '@vueuse/core'
+import type { MaybeRef } from 'vue'
 import type { Annotation, AnnotationType } from '~/stores/annotation'
 import { storeToRefs } from 'pinia'
 import { computed, unref } from 'vue'
@@ -39,7 +39,7 @@ export const useAnnotations = (annotationType: MaybeRef<AnnotationType>) => {
 
   // Check if an annotation is selected.
   const isSelected = (annotation: Annotation): boolean => (
-    selectedAnnotations.value.find((d) => d.uuid === annotation.uuid) !== undefined
+    selectedAnnotations.value.some((d) => d.uuid === annotation.uuid)
   )
 
   // Select an annotation.

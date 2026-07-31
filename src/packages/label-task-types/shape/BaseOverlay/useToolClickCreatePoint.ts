@@ -1,5 +1,4 @@
-import type { MaybeRef } from '@vueuse/core'
-import type { Ref } from 'vue'
+import type { MaybeRef, Ref } from 'vue'
 import type { Annotation, DataObject } from '~/stores/annotation'
 import { unref, watch } from 'vue'
 import { AnnotationType } from '~/stores/annotation'

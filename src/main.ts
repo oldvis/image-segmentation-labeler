@@ -6,10 +6,9 @@ import VueKonva from 'vue-konva'
 import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
 
-import '@unocss/reset/tailwind.css'
+import 'uno.css'
 import './styles/main.css'
 import './styles/scrollbar.css'
-import 'uno.css'
 
 const app = createApp(App)
 const router = createRouter({

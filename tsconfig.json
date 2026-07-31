@@ -2,11 +2,16 @@
   "compilerOptions": {
     "target": "es2020",
     "jsx": "preserve",
-    "lib": ["DOM", "ESNext"],
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": [
+        "./src/*"
+      ]
     },
     "resolveJsonModule": true,
     "types": [
@@ -18,9 +23,28 @@
     "strict": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,
+    "noEmit": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
-  "exclude": ["dist", "node_modules", "eslint.config.js"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.vue",
+    "test/**/*.ts",
+    "e2e/**/*.ts",
+    "auto-imports.d.ts",
+    "components.d.ts",
+    "shims.d.ts",
+    "onelabeler.d.ts",
+    "vite.config.ts",
+    "playwright.config.ts",
+    "uno.config.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "eslint.config.js"
+  ]
 }
