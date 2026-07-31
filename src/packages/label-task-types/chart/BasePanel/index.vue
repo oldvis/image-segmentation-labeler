@@ -22,6 +22,7 @@ const {
       </div>
     </div>
     <div
+      data-testid="spans-panel"
       class="gap-1 p-1 overflow-auto"
       flex="~ col"
     >

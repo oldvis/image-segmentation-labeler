@@ -28,6 +28,7 @@ const isSelected = (category: string): boolean => {
       v-for="d in categories"
       :key="d"
       icon-btn
+      :data-testid="`tag-${d}`"
       class="flex border rounded items-center px-1 gap-1"
       :class="isSelected(d) ? 'selected' : ''"
       @click="toggleCategory(d)"

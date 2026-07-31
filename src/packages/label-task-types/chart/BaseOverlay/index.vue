@@ -167,6 +167,7 @@ const { scale, position } = useTransform(container, contentWidth, contentHeight)
 <template>
   <div
     ref="container"
+    data-testid="chart-stage"
     class="border border-gray-200"
   >
     <!-- Set position absolute to allow container to have responsive resize

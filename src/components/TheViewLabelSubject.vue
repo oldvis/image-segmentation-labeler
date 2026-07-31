@@ -59,6 +59,7 @@ watch(shown, () => {
       <div class="gap-1 flex">
         <button
           btn
+          data-testid="nav-previous"
           :title="`Show previous ${shownNumber} entries`"
           :disabled="startIndex === 0"
           @click="showNext(-shownNumber)"
@@ -67,6 +68,7 @@ watch(shown, () => {
         </button>
         <button
           btn
+          data-testid="nav-next"
           :title="`Show next ${shownNumber} entries`"
           :disabled="startIndex + shownNumber >= dataObjects.length"
           @click="showNext(shownNumber)"

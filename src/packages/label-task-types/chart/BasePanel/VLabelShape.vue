@@ -102,6 +102,7 @@ const removeMark = (i: number): void => {
 
 <template>
   <div
+    data-testid="span-card"
     class="p-1 border rounded gap-1"
     flex="~ col"
     :class="{ '!selected': isSelected }"

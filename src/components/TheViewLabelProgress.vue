@@ -48,17 +48,28 @@ const upload = async () => {
         <div v-if="i === 0" class="border-l my-1" />
         <div class="flex gap-1 my-auto">
           {{ d.title }}
-          <div class="font-bold">
+          <div
+            class="font-bold"
+            :data-testid="d.title === '#Labeled:' ? 'progress-labeled-count' : undefined"
+          >
             {{ d.value }}
           </div>
         </div>
         <div class="border-l my-1" />
       </template>
       <div class="flex gap-1 my-1">
-        <button btn @click="save">
+        <button
+          btn
+          data-testid="annotations-download"
+          @click="save"
+        >
           download
         </button>
-        <button btn @click="upload">
+        <button
+          btn
+          data-testid="annotations-upload"
+          @click="upload"
+        >
           upload
         </button>
       </div>

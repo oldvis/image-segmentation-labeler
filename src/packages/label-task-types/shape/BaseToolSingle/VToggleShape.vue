@@ -45,6 +45,7 @@ const btns = [
       v-for="btn in btns"
       :key="btn.value"
       icon-btn
+      :data-testid="`tool-${btn.value}`"
       :title="btn.title"
       :disabled="disabled"
       :class="value === btn.value ? 'selected' : 'opacity-50'"
