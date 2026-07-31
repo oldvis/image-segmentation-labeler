@@ -104,10 +104,10 @@ export default (
   tolerance: number,
   highestQuality: boolean,
 ): Point[] => {
-  if (points.length <= 2) return points
+  if (points.length <= 2)
+    return points
 
   const sqTolerance = tolerance !== undefined ? tolerance * tolerance : 1
-  let simplified = highestQuality ? points : simplifyRadialDist(points, sqTolerance)
-  simplified = simplifyDouglasPeucker(points, sqTolerance)
-  return simplified
+  const staged = highestQuality ? points : simplifyRadialDist(points, sqTolerance)
+  return simplifyDouglasPeucker(staged, sqTolerance)
 }
