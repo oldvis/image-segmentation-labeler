@@ -1,25 +1,13 @@
 import type { Component, MaybeRef, Ref } from 'vue'
 import type { Annotation, DataObject } from '~/stores/annotation'
+import type { Point } from '~/utils/geometry'
 import Konva from 'konva'
 import { computed, unref, watch } from 'vue'
 import { AnnotationType } from '~/stores/annotation'
+import { getBBox } from '~/utils/geometry'
 import { ShapeType } from '../types'
 
-type Point = [number, number]
 type VueKonvaLayer = Component & { getNode: () => Konva.Layer }
-
-const getBBox = (points: Point[]): {
-  xMin: number
-  xMax: number
-  yMin: number
-  yMax: number
-} => {
-  const xMin = Math.min(...points.map((d) => d[0]))
-  const xMax = Math.max(...points.map((d) => d[0]))
-  const yMin = Math.min(...points.map((d) => d[1]))
-  const yMax = Math.max(...points.map((d) => d[1]))
-  return { xMin, xMax, yMin, yMax }
-}
 
 /**
  * Use the ClickCreateRect tool's effect on the data store.
