@@ -59,6 +59,18 @@ describe('annotation store', () => {
     expect(updated.time).toEqual(expect.any(String))
   })
 
+  it('update throws when uuid is missing', () => {
+    const store = useAnnotationStore()
+    expect(() => store.update({
+      type: AnnotationType.Chart,
+      uuid: 'missing-uuid',
+      subject: 's',
+      value: {},
+      user: null,
+      time: null,
+    })).toThrow(/non-existing annotation/i)
+  })
+
   it('remove deletes by uuid and throws for missing uuid', () => {
     const store = useAnnotationStore()
     store.add({

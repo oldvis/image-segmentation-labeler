@@ -67,6 +67,7 @@ export const useStore = defineStore('annotation', {
     /** Update an annotation. */
     update(updated: Annotation): void {
       const index = this.annotations.findIndex((d) => (d.uuid === updated.uuid))
+      if (index < 0) throw new Error(`Update non-existing annotation with uuid: ${updated.uuid}`)
       const userStore = useUserStore()
       this.annotations[index] = {
         ...updated,
