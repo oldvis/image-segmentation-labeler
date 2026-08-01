@@ -23,4 +23,21 @@ describe('message store', () => {
     store.removeMessage(uuid)
     expect(store.messages).toHaveLength(0)
   })
+
+  it('removeMessage is a no-op for unknown uuid', () => {
+    const store = useMessageStore()
+    store.addErrorMessage('keep me')
+    expect(store.messages).toHaveLength(1)
+    store.removeMessage('missing')
+    expect(store.messages).toHaveLength(1)
+    expect(store.messages[0].content).toBe('keep me')
+  })
+
+  it('removeByContent removes matching messages', () => {
+    const store = useMessageStore()
+    store.addErrorMessage('Please sign in if you want to save your name in the annotations.', Number.POSITIVE_INFINITY)
+    store.addSuccessMessage('other')
+    store.removeByContent('Please sign in if you want to save your name in the annotations.')
+    expect(store.messages.map((d) => d.content)).toEqual(['other'])
+  })
 })

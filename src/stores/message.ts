@@ -35,10 +35,13 @@ export const useStore = defineStore('message', {
     },
     removeMessage(uuid: string): void {
       const index = this.messages.findIndex((d) => d.uuid === uuid)
+      if (index < 0) return
       this.messages.splice(index, 1)
     },
+    removeByContent(content: string): void {
+      this.messages = this.messages.filter((d) => d.content !== content)
+    },
   },
-  persist: true,
 })
 
 if (import.meta.hot) {
