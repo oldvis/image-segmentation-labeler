@@ -18,28 +18,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
+          # Vite 8 requires Node ^20.19.0 || >=22.12.0
           node-version: 22
           cache: pnpm
 
-      - name: Install
-        run: pnpm install
-
-      - name: Build
+      - name: Install and Build
         env:
           NODE_OPTIONS: --max_old_space_size=4096
-        run: pnpm run build
+        run: |
+          pnpm install
+          pnpm run build
 
       # SPA fallback for client-side routes under /image-segmentation-labeler/
       - name: Create 404 Page
         run: cp dist/index.html dist/404.html
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
@@ -50,5 +54,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deployment
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4

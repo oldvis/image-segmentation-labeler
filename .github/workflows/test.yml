@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     branches:
       - main
@@ -12,21 +11,26 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-
     timeout-minutes: 10
+
+    env:
+      # Keep browser binaries in the workspace so actions/cache can restore them
+      # on every OS (default paths differ between Linux/macOS/Windows).
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/ms-playwright
 
     strategy:
       matrix:
+        # Vite 8 requires Node ^20.19.0 || >=22.12.0
         node_version: [22.x]
         os: [ubuntu-latest, windows-latest]
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
 
       - name: Set node version to ${{ matrix.node_version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node_version }}
           cache: pnpm
@@ -42,6 +46,25 @@ jobs:
 
       - name: Test
         run: pnpm run test
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ${{ github.workspace }}/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install Playwright Chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install chromium --with-deps
+
+      # OS packages are not part of the browser cache; reinstall on Linux cache hits.
+      - name: Install Playwright OS deps
+        if: steps.playwright-cache.outputs.cache-hit == 'true' && runner.os == 'Linux'
+        run: pnpm exec playwright install-deps chromium
+
+      - name: E2E
+        run: pnpm run test:e2e
 
       - name: Lint
         env:
