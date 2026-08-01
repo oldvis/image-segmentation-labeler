@@ -104,8 +104,9 @@ export default (
   tolerance: number,
   highestQuality: boolean,
 ): Point[] => {
-  if (points.length <= 2)
+  if (points.length <= 2) {
     return points
+  }
 
   const sqTolerance = tolerance !== undefined ? tolerance * tolerance : 1
   const staged = highestQuality ? points : simplifyRadialDist(points, sqTolerance)
