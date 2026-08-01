@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { Annotation } from '~/stores/annotation'
 import { storeToRefs } from 'pinia'
 import { saveJsonFile, uploadJsonFile } from '~/plugins/file'
-import { StatusType, useStore as useAnnotationStore } from '~/stores/annotation'
+import { isAnnotationArray, StatusType, useStore as useAnnotationStore } from '~/stores/annotation'
+import { useStore as useMessageStore } from '~/stores/message'
 
 const annotationStore = useAnnotationStore()
 const { annotations, statuses } = storeToRefs(annotationStore)
+const { addErrorMessage, addSuccessMessage } = useMessageStore()
 
 const nUnlabeled = computed(() => (
   statuses.value.filter((d) => [StatusType.New, StatusType.Viewed].includes(d.value)).length
@@ -21,7 +22,19 @@ const save = () => {
   saveJsonFile(annotations.value, 'annotation.json')
 }
 const upload = async () => {
-  annotations.value = (await uploadJsonFile()) as Annotation[]
+  try {
+    const data = await uploadJsonFile()
+    if (data === null) return
+    if (!isAnnotationArray(data)) {
+      addErrorMessage('Upload failed: file is not an annotations array')
+      return
+    }
+    annotations.value = data
+    addSuccessMessage('Annotations uploaded')
+  }
+  catch {
+    addErrorMessage('Upload failed: invalid JSON')
+  }
 }
 </script>
 

@@ -8,6 +8,7 @@ import { useStore as useUserStore } from '../user'
 import { categories } from './categories'
 import { StatusType } from './types'
 
+export * from './schema'
 export * from './types'
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>

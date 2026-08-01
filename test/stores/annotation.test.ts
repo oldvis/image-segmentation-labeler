@@ -1,6 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { AnnotationType, StatusType, useStore as useAnnotationStore } from '~/stores/annotation'
+import { AnnotationType, isAnnotationArray, StatusType, useStore as useAnnotationStore } from '~/stores/annotation'
 import { useStore as useUserStore } from '~/stores/user'
 
 describe('annotation store', () => {
@@ -110,5 +110,18 @@ describe('annotation store', () => {
     const b = store.categoryToColor('Rect')
     expect(a).toBe(b)
     expect(a).toMatch(/^#[0-9a-f]{6}$/i)
+  })
+
+  it('isAnnotationArray accepts well-formed rows and rejects junk', () => {
+    expect(isAnnotationArray([{
+      type: AnnotationType.Chart,
+      uuid: 'a1',
+      subject: 's1',
+      value: { shape: 'Point', points: [[1, 2]] },
+      user: null,
+      time: null,
+    }])).toBe(true)
+    expect(isAnnotationArray({ nope: true })).toBe(false)
+    expect(isAnnotationArray([{ uuid: 'a1' }])).toBe(false)
   })
 })
