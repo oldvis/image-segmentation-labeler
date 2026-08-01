@@ -50,7 +50,7 @@ watch(shown, () => {
     <div
       v-if="shown.length !== 0"
       ref="content"
-      class="overflow-auto scroll-smooth flex-1 gap-1"
+      class="scroll-smooth flex-1 gap-1 overflow-auto"
       flex="~ col"
     >
       <VDataEntry
@@ -60,7 +60,7 @@ watch(shown, () => {
         :index="startIndex + i + 1"
         class="flex-1"
       />
-      <div class="gap-1 flex">
+      <div class="flex gap-1">
         <button
           btn
           data-testid="nav-previous"
@@ -83,7 +83,7 @@ watch(shown, () => {
     </div>
     <div
       v-else
-      class="m-auto text-xl"
+      class="text-xl m-auto"
     >
       No Entries Matched
     </div>

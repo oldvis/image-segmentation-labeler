@@ -40,17 +40,17 @@ const upload = async () => {
 
 <template>
   <div
-    class="flex gap-1 px-1"
+    class="px-1 flex gap-1"
     border="~ gray-200"
   >
-    <div class="flex gap-1 text-sm">
+    <div class="text-sm flex gap-1">
       <div class="i-fa6-solid:list-check my-auto" />
       <div class="font-bold my-auto">
         Progress
       </div>
     </div>
     <div class="grow" />
-    <div class="flex gap-1 text-sm">
+    <div class="text-sm flex gap-1">
       <template
         v-for="(d, i) in [
           { title: '#Not-Yet-Labeled:', value: nUnlabeled },
@@ -58,8 +58,8 @@ const upload = async () => {
           { title: '#Skipped:', value: nSkipped },
         ]" :key="d.title"
       >
-        <div v-if="i === 0" class="border-l my-1" />
-        <div class="flex gap-1 my-auto">
+        <div v-if="i === 0" class="my-1 border-l" />
+        <div class="my-auto flex gap-1">
           {{ d.title }}
           <div
             class="font-bold"
@@ -68,9 +68,9 @@ const upload = async () => {
             {{ d.value }}
           </div>
         </div>
-        <div class="border-l my-1" />
+        <div class="my-1 border-l" />
       </template>
-      <div class="flex gap-1 my-1">
+      <div class="my-1 flex gap-1">
         <button
           btn
           data-testid="annotations-download"

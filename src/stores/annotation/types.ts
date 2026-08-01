@@ -74,10 +74,20 @@ export interface Annotation {
   time: string | null
 }
 
+/** Image payload for OldVis labeling subjects. */
+export interface ImageDataObjectValue {
+  url: string
+  width: number
+  height: number
+  filename: string
+}
+
 /** The interface of a data object to be labeled. */
-export interface DataObject {
+export interface DataObject<T = unknown> {
   /** The universal unique id of the data object. */
   uuid: string
   /** The content of the data object. */
-  value: unknown
+  value: T
 }
+
+export type ImageDataObject = DataObject<ImageDataObjectValue>

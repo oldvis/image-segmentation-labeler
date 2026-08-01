@@ -1,4 +1,4 @@
-import type { Annotation, DataObject, Status } from './types'
+import type { Annotation, ImageDataObject, Status } from './types'
 import { scaleOrdinal, schemeCategory10 } from 'd3'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
@@ -13,7 +13,7 @@ export * from './types'
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 
-const dataObjects: DataObject[] = rawDataObjects.map((d) => (
+const dataObjects: ImageDataObject[] = rawDataObjects.map((d) => (
   {
     uuid: d.uuid,
     value: {
@@ -34,7 +34,7 @@ export const useStore = defineStore('annotation', {
     statuses,
     categories,
     /** The selected data objects. */
-    selectedDataObjects: [] as DataObject[],
+    selectedDataObjects: [] as ImageDataObject[],
     /** The selected annotations. */
     selectedAnnotations: [] as Annotation[],
   }),

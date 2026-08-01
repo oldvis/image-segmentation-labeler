@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { DataObject } from '~/stores/annotation/types'
+import type { ImageDataObject } from '~/stores/annotation/types'
 import { dataTypeImage } from '@onelabeler/core'
 import { BaseOverlay } from '~/packages/label-task-types/chart'
 
 const props = defineProps({
   datum: {
-    type: Object as PropType<DataObject>,
+    type: Object as PropType<ImageDataObject>,
     required: true,
   },
   index: {
@@ -18,14 +18,12 @@ const props = defineProps({
 const { datum } = toRefs(props)
 const { BaseDisplay } = dataTypeImage
 
-const filename = computed(() => (
-  (datum.value as { filename?: string })?.filename
-))
+const filename = computed(() => datum.value.value.filename)
 </script>
 
 <template>
   <div
-    class="p-1 text-sm"
+    class="text-sm p-1"
     bg="slate-100 dark:slate-900"
     border="~ gray-200"
     flex="~ col"
@@ -36,7 +34,7 @@ const filename = computed(() => (
       </div>
       <b>{{ filename }}</b>
     </div>
-    <div class="flex-1 flex">
+    <div class="flex flex-1">
       <BaseDisplay
         class="flex-1"
         :data-object="datum"

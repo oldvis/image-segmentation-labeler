@@ -1,9 +1,9 @@
-import type { Annotation, DataObject } from '~/stores/annotation'
+import type { Annotation, ImageDataObject } from '~/stores/annotation'
 import { SchemaType } from '~/packages/label-task-types/chart/types'
 import { ShapeType } from '~/packages/label-task-types/shape/types'
 import { AnnotationType } from '~/stores/annotation'
 
-export const makeDataObject = (uuid = 'img-1'): DataObject => ({
+export const makeDataObject = (uuid = 'img-1'): ImageDataObject => ({
   uuid,
   value: {
     url: 'https://example.com/img-1.jpg',

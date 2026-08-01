@@ -2,8 +2,9 @@ import antfu from '@antfu/eslint-config'
 
 export default antfu(
   {
-    vue: true,
-    typescript: true,
+    unocss: true,
+    formatters: true,
+    pnpm: true,
     ignores: [
       'src/**/*.json',
       'shims.d.ts',
@@ -11,6 +12,7 @@ export default antfu(
       'test-results/**',
       'playwright-report/**',
       'blob-report/**',
+      'docs/**',
     ],
   },
   {
