@@ -54,7 +54,7 @@ const updateChannelField = (channel: string, field: string): void => {
 </script>
 
 <template>
-  <div class="border rounded flex flex-col gap-1 p-1">
+  <div class="p-1 border rounded flex flex-col gap-1">
     <div class="flex gap-1">
       <div class="flex gap-1">
         <b>Schema</b>
@@ -83,7 +83,7 @@ const updateChannelField = (channel: string, field: string): void => {
       />
     </div>
     <div flex="~ col">
-      <div class="flex items-center gap-2">
+      <div class="flex gap-2 items-center">
         <b>Encode</b>
         <VMenuMultiSelect
           :value="Object.keys(mark.encode)"
@@ -93,7 +93,7 @@ const updateChannelField = (channel: string, field: string): void => {
       </div>
       <div
         v-if="Object.entries(mark.encode).length !== 0"
-        class="border rounded gap-1 p-1"
+        class="p-1 border rounded gap-1"
         flex="~ col"
       >
         <div
@@ -105,20 +105,20 @@ const updateChannelField = (channel: string, field: string): void => {
             v-if="i !== 0"
             class="border-t"
           />
-          <div class="flex items-center gap-1">
+          <div class="flex gap-1 items-center">
             <b>Channel</b>
             <div fixed-value-container>
               {{ key }}
             </div>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex gap-2 items-center">
             <b>Field</b>
             <input
               :value="d?.field"
-              input-area
+
               class="grow"
               placeholder="field"
-              required
+              required input-area
               @input="updateChannelField(key as string, ($event.target as HTMLInputElement).value)"
             >
           </div>

@@ -23,7 +23,7 @@ const {
     </div>
     <div
       data-testid="spans-panel"
-      class="gap-1 p-1 overflow-auto"
+      class="p-1 gap-1 overflow-auto"
       flex="~ col"
     >
       <VLabelShape

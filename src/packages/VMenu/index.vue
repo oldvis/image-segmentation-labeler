@@ -17,9 +17,9 @@ onClickOutside(menu, () => {
 
 <template>
   <div flex="~ col">
-    <div class="relative inline-block">
+    <div class="inline-block relative">
       <button
-        class="border rounded px-1 flex"
+        class="px-1 border rounded flex"
         type="button"
         @click="show = true"
       >
@@ -29,7 +29,7 @@ onClickOutside(menu, () => {
       </button>
       <div
         ref="menu"
-        class="absolute z-1 rounded shadow"
+        class="rounded shadow absolute z-1"
         bg="white dark:gray-700"
         :class="!show ? 'hidden' : ''"
       >

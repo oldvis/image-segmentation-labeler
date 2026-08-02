@@ -29,7 +29,7 @@ const isSelected = (category: string): boolean => {
       :key="d"
       icon-btn
       :data-testid="`tag-${d}`"
-      class="flex border rounded items-center px-1 gap-1"
+      class="px-1 border rounded flex gap-1 items-center"
       :class="isSelected(d) ? 'selected' : ''"
       @click="toggleCategory(d)"
     >

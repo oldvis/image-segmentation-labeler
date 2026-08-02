@@ -44,7 +44,7 @@ const updateRepeatColumn = (column: number): void => {
 </script>
 
 <template>
-  <div class="flex items-center gap-2">
+  <div class="flex gap-2 items-center">
     <b>Repeat</b>
     <VMenuMultiSelect
       :value="repeatMenuValue"
@@ -53,31 +53,31 @@ const updateRepeatColumn = (column: number): void => {
     />
     <div
       v-if="repeat?.row !== undefined"
-      class="flex items-center gap-2"
+      class="flex gap-2 items-center"
     >
       <b>Row</b>
       <input
         :value="repeat?.row"
-        input-area
+
         class="w-12"
         type="number"
         min="1"
-        required
+        required input-area
         @input="updateRepeatRow(+($event.target as HTMLInputElement).value)"
       >
     </div>
     <div
       v-if="repeat?.column !== undefined"
-      class="flex items-center gap-2"
+      class="flex gap-2 items-center"
     >
       <b>Column</b>
       <input
         :value="repeat?.column"
-        input-area
+
         class="w-12"
         type="number"
         min="1"
-        required
+        required input-area
         @input="updateRepeatColumn(+($event.target as HTMLInputElement).value)"
       >
     </div>

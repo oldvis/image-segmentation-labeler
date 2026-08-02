@@ -27,14 +27,14 @@ const onClickSignIn = async () => {
       <button
         v-if="!isSignedIn"
         icon-btn
-        class="border-x px-2 mx-2"
+        class="mx-2 px-2 border-x"
         @click="dialog = !dialog"
       >
         Sign in
       </button>
       <div
         v-else
-        class="border-x px-2 mx-2 my-auto"
+        class="mx-2 my-auto px-2 border-x"
       >
         Hi, {{ name }}
         <button
@@ -48,7 +48,7 @@ const onClickSignIn = async () => {
     </template>
     <template #default>
       <div
-        class="rounded shadow max-w-md p-4"
+        class="p-4 rounded max-w-md shadow"
         bg="white dark:gray-700"
       >
         <div class="flex">
@@ -69,7 +69,7 @@ const onClickSignIn = async () => {
             <div>
               <label
                 for="user"
-                class="block mb-2"
+                class="mb-2 block"
               >
                 Name
               </label>
@@ -78,7 +78,7 @@ const onClickSignIn = async () => {
                 v-model="nameInputModel"
                 placeholder="Name"
                 required
-                class="rounded text-sm p-2.5 dark:placeholder-gray-400 "
+                class="text-sm p-2.5 rounded dark:placeholder-gray-400"
                 bg="gray-50 dark:gray-600"
                 border="~ gray-300 dark:gray-500"
               >

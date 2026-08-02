@@ -32,7 +32,7 @@ const isSelected = (category: T): boolean => {
 
 <template>
   <div flex="~ col">
-    <div class="relative inline-block h-16.8px">
+    <div class="h-16.8px inline-block relative">
       <button
         icon-btn
         title="add"
@@ -42,14 +42,14 @@ const isSelected = (category: T): boolean => {
       </button>
       <div
         ref="menu"
-        class="absolute z-1 rounded shadow"
+        class="rounded shadow absolute z-1"
         bg="white dark:gray-700"
         :class="!show ? 'hidden' : ''"
       >
         <li
           v-for="(d, i) in options"
           :key="i"
-          class="flex items-center cursor-pointer gap-1 p-1"
+          class="p-1 flex gap-1 cursor-pointer items-center"
           bg="hover:gray-100 dark:hover:gray-600"
           @click="toggleCategory(d)"
         >

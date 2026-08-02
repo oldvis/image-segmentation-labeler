@@ -113,7 +113,7 @@ const removeMark = (i: number): void => {
         Chart
       </div>
       <div class="grow" />
-      <div class="flex gap-1 px-1">
+      <div class="px-1 flex gap-1">
         <b>Shape</b>
         <div fixed-value-container>
           {{ annotation.value.shape }}
@@ -134,7 +134,7 @@ const removeMark = (i: number): void => {
     />
     <div
       v-if="annotation.user !== null"
-      class="flex gap-1 mx-1"
+      class="mx-1 flex gap-1"
     >
       <b>last modified by</b>
       <div fixed-value-container>
@@ -144,38 +144,38 @@ const removeMark = (i: number): void => {
 
     <div border="t" />
 
-    <div class="flex items-center gap-2 mx-1">
+    <div class="mx-1 flex gap-2 items-center">
       <b>Title</b>
       <input
         :value="annotation.value.chart.title"
-        input-area
+
         class="grow"
         placeholder="chart title"
-        required
+        required input-area
         @input="updateTitle"
       >
     </div>
 
-    <div class="flex items-center gap-2 mx-1">
+    <div class="mx-1 flex gap-2 items-center">
       <b>Theme</b>
       <input
         :value="annotation.value.chart.theme"
-        input-area
+
         class="grow"
         placeholder="content theme"
-        required
+        required input-area
         @input="updateTheme"
       >
     </div>
 
-    <div class="flex items-center gap-2 mx-1">
+    <div class="mx-1 flex gap-2 items-center">
       <b>Language</b>
       <input
         :value="annotation.value.chart.language"
-        input-area
+
         class="grow"
         placeholder="language used"
-        required
+        required input-area
         @input="updateLanguage"
       >
     </div>
@@ -191,7 +191,7 @@ const removeMark = (i: number): void => {
     <div border="t" />
 
     <div>
-      <div class="flex gap-2 px-1">
+      <div class="px-1 flex gap-2">
         <b>Marks</b>
         <button
           icon-btn
