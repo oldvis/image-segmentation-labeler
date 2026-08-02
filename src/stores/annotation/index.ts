@@ -1,4 +1,8 @@
+import type { User } from '../user/types'
 import type { Annotation, ImageDataObject, Status } from './types'
+import type { AnnotationChart } from '~/packages/label-task-types/chart/types'
+import type { AnnotationMultilabelClassification } from '~/packages/label-task-types/multilabel-classification/types'
+import type { AnnotationShape } from '~/packages/label-task-types/shape/types'
 import { scaleOrdinal, schemeCategory10 } from 'd3'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
@@ -8,10 +12,36 @@ import { useStore as useUserStore } from '../user'
 import { categories } from './categories'
 import { StatusType } from './types'
 
-export * from './schema'
+export { isAnnotationArray } from './schema'
 export * from './types'
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
+
+/**
+ * Argument to the annotation store's `add` action. `uuid`, `user`, and `time`
+ * are optional — if omitted, that action sets them (new uuid, current user,
+ * current time).
+ *
+ * Declared as an explicit union so narrowing on `type` still works
+ * (`Optional<Annotation, …>` on the merged union does not).
+ */
+export type AnnotationCreate
+  = Optional<AnnotationChart, 'uuid' | 'user' | 'time'>
+    | Optional<AnnotationShape, 'uuid' | 'user' | 'time'>
+    | Optional<AnnotationMultilabelClassification, 'uuid' | 'user' | 'time'>
+
+/** Fill uuid/user/time. Generic keeps the Chart/Shape/Multilabel variant. */
+const withAnnotationMeta = <T extends AnnotationCreate>(
+  partial: T,
+  uuid: string,
+  user: User | null,
+  time: string,
+): T & Pick<Annotation, 'uuid' | 'user' | 'time'> => ({
+  ...partial,
+  uuid,
+  user,
+  time,
+})
 
 const dataObjects: ImageDataObject[] = rawDataObjects.map((d) => (
   {
@@ -54,27 +84,26 @@ export const useStore = defineStore('annotation', {
       const { uuidToStatus } = this
       return (uuid in uuidToStatus) && (uuidToStatus[uuid] === StatusType.Labeled)
     },
-    add(partial: Optional<Annotation, 'uuid' | 'user' | 'time'>) {
+    add(partial: AnnotationCreate): void {
       const userStore = useUserStore()
-      const annotation: Annotation = {
-        // Create uuid if not provided in partial.
-        uuid: uuidv4(),
-        ...partial,
-        user: userStore.user,
-        time: new Date().toISOString(),
-      }
-      this.annotations.push(annotation)
+      this.annotations.push(withAnnotationMeta(
+        partial,
+        partial.uuid ?? uuidv4(),
+        userStore.user,
+        new Date().toISOString(),
+      ))
     },
     /** Update an annotation. */
     update(updated: Annotation): void {
       const index = this.annotations.findIndex((d) => (d.uuid === updated.uuid))
       if (index < 0) throw new Error(`Update non-existing annotation with uuid: ${updated.uuid}`)
       const userStore = useUserStore()
-      this.annotations[index] = {
-        ...updated,
-        user: userStore.user,
-        time: new Date().toISOString(),
-      }
+      this.annotations[index] = withAnnotationMeta(
+        updated,
+        updated.uuid,
+        userStore.user,
+        new Date().toISOString(),
+      )
     },
     /** Remove an annotation. */
     remove(uuid: string): void {

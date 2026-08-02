@@ -1,10 +1,8 @@
 import type { Ref } from 'vue'
-import type { Annotation } from '~/stores/annotation'
+import type { Annotation, AnnotationCreate } from '~/stores/annotation'
 import { onKeyDown, useMagicKeys } from '@vueuse/core'
 import { v4 as uuidv4 } from 'uuid'
 import { ref, watch } from 'vue'
-
-type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 
 /**
  * Use the keyboard shortcuts.
@@ -17,7 +15,7 @@ type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 const useKeyboard = (
   annotations: Ref<Annotation[]>,
   selectedAnnotationUuids: Ref<string[]>,
-  add: (d: Optional<Annotation, 'uuid' | 'user' | 'time'>) => void,
+  add: (d: AnnotationCreate) => void,
   select: (d: Annotation | null) => void,
   removeBulk: (uuids: string[]) => void,
 ) => {

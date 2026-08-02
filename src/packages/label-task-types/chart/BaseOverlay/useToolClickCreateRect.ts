@@ -1,6 +1,7 @@
 import type Konva from 'konva'
 import type { Component, MaybeRef, Ref } from 'vue'
-import type { Annotation, DataObject } from '~/stores/annotation'
+import type { MarkType } from '../types'
+import type { AnnotationCreate, ImageDataObject } from '~/stores/annotation'
 import type { Point } from '~/utils/geometry'
 import { unref, watch } from 'vue'
 import { AnnotationType } from '~/stores/annotation'
@@ -21,9 +22,9 @@ type VueKonvaLayer = Component & { getNode: () => Konva.Layer }
  */
 const useDateEffect = (
   points: Ref<Point[]>,
-  categories: Ref<string[]>,
-  dataObject: Ref<DataObject>,
-  add: (d: Omit<Annotation, 'uuid' | 'user' | 'time'>) => void,
+  categories: Ref<MarkType[]>,
+  dataObject: Ref<ImageDataObject>,
+  add: (d: AnnotationCreate) => void,
   enabled: MaybeRef<boolean> = true,
 ) => {
   // Finish rect creation when two points are created.
@@ -37,8 +38,12 @@ const useDateEffect = (
       subject: dataObject.value.uuid,
       value: {
         shape: ShapeType.Rect,
-        points: [[xMin, yMin], [xMin, yMax], [xMax, yMax], [xMax, yMin]]
-          .map((d) => [Math.round(d[0]), Math.round(d[1])]),
+        points: [
+          [Math.round(xMin), Math.round(yMin)],
+          [Math.round(xMin), Math.round(yMax)],
+          [Math.round(xMax), Math.round(yMax)],
+          [Math.round(xMax), Math.round(yMin)],
+        ],
         chart: {
           marks: categories.value.map((d) => ({
             schema: SchemaType.Tabular,
@@ -66,9 +71,9 @@ const useDateEffect = (
  */
 const useTool = (
   points: Ref<Point[]>,
-  categories: Ref<string[]>,
-  dataObject: Ref<DataObject>,
-  add: (d: Omit<Annotation, 'uuid' | 'user' | 'time'>) => void,
+  categories: Ref<MarkType[]>,
+  dataObject: Ref<ImageDataObject>,
+  add: (d: AnnotationCreate) => void,
   mouse: Ref<Point | null>,
   color: Ref<string | null>,
   layer: Ref<VueKonvaLayer | undefined>,

@@ -1,5 +1,5 @@
 import type { MaybeRef, Ref } from 'vue'
-import type { Annotation, DataObject } from '~/stores/annotation'
+import type { ImageDataObject, AnnotationCreate } from '~/stores/annotation'
 import { unref, watch } from 'vue'
 import { AnnotationType } from '~/stores/annotation'
 import { ShapeType } from '../types'
@@ -15,8 +15,8 @@ import { ShapeType } from '../types'
 const useTool = (
   points: Ref<[number, number][]>,
   category: Ref<string | null>,
-  dataObject: Ref<DataObject>,
-  add: (d: Omit<Annotation, 'uuid' | 'user' | 'time'>) => void,
+  dataObject: Ref<ImageDataObject>,
+  add: (d: AnnotationCreate) => void,
   enabled: MaybeRef<boolean> = true,
 ) => {
   // Finish point creation when one point is created.
@@ -24,13 +24,14 @@ const useTool = (
     if (!unref(enabled)) return
     if (points.value.length > 1) throw new Error('points length > 1 when creating point')
     if (category.value === null || points.value.length !== 1) return
+    const [x, y] = points.value[0]
     add({
       type: AnnotationType.Shape,
       subject: dataObject.value.uuid,
       value: {
         category: category.value,
         shape: ShapeType.Point,
-        points: points.value.map((d) => [Math.round(d[0]), Math.round(d[1])]),
+        points: [[Math.round(x), Math.round(y)]],
       },
     })
     points.value = []

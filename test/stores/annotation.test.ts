@@ -1,5 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it } from 'vitest'
+import seedAnnotations from '~/data/annotations.json'
+import { ShapeType } from '~/packages/label-task-types/shape/types'
 import { AnnotationType, isAnnotationArray, StatusType, useStore as useAnnotationStore } from '~/stores/annotation'
 import { useStore as useUserStore } from '~/stores/user'
 
@@ -28,7 +30,11 @@ describe('annotation store', () => {
     store.add({
       type: AnnotationType.Chart,
       subject: 'img-1',
-      value: { shape: 'Rect', points: [[0, 0], [0, 1], [1, 1], [1, 0]], chart: { marks: [] } },
+      value: {
+        shape: ShapeType.Rect,
+        points: [[0, 0], [0, 1], [1, 1], [1, 0]],
+        chart: { marks: [] },
+      },
     })
 
     expect(store.annotations).toHaveLength(before + 1)
@@ -37,6 +43,21 @@ describe('annotation store', () => {
     expect(created.user).toEqual(user.user)
     expect(created.time).toEqual(expect.any(String))
     expect(created.subject).toBe('img-1')
+    expect(created.type).toBe(AnnotationType.Chart)
+  })
+
+  it('add accepts Chart payload', () => {
+    const store = useAnnotationStore()
+    store.add({
+      type: AnnotationType.Chart,
+      subject: 'img-1',
+      value: {
+        shape: ShapeType.Rect,
+        points: [[0, 0], [0, 1], [1, 1], [1, 0]],
+        chart: { marks: [] },
+      },
+    })
+    expect(store.annotations.at(-1)?.type).toBe(AnnotationType.Chart)
   })
 
   it('update rewrites matching uuid and refreshes user/time', () => {
@@ -49,6 +70,9 @@ describe('annotation store', () => {
       value: ['Vis'],
     })
     const created = store.annotations.at(-1)!
+    if (created.type !== AnnotationType.MultilabelClassification) {
+      throw new Error('expected multilabel annotation')
+    }
     user.trySignIn('bob')
 
     store.update({ ...created, value: ['Vis', 'Confident'] })
@@ -65,7 +89,11 @@ describe('annotation store', () => {
       type: AnnotationType.Chart,
       uuid: 'missing-uuid',
       subject: 's',
-      value: {},
+      value: {
+        shape: ShapeType.Rect,
+        points: [[0, 0], [0, 1], [1, 1], [1, 0]],
+        chart: { marks: [] },
+      },
       user: null,
       time: null,
     })).toThrow(/non-existing annotation/i)
@@ -117,11 +145,45 @@ describe('annotation store', () => {
       type: AnnotationType.Chart,
       uuid: 'a1',
       subject: 's1',
-      value: { shape: 'Point', points: [[1, 2]] },
+      value: {
+        shape: ShapeType.Point,
+        points: [[1, 2]],
+        chart: { marks: [] },
+      },
       user: null,
       time: null,
     }])).toBe(true)
     expect(isAnnotationArray({ nope: true })).toBe(false)
     expect(isAnnotationArray([{ uuid: 'a1' }])).toBe(false)
+  })
+
+  it('isAnnotationArray rejects unknown annotation types', () => {
+    expect(isAnnotationArray([{
+      type: 'Classification',
+      uuid: 'a',
+      subject: 's',
+      value: 'Vis',
+      user: null,
+      time: null,
+    }])).toBe(false)
+  })
+
+  it('isAnnotationArray accepts Chart rows with chart.marks', () => {
+    expect(isAnnotationArray([{
+      type: AnnotationType.Chart,
+      uuid: 'a1',
+      subject: 's1',
+      value: {
+        shape: 'Rect',
+        points: [[0, 0], [0, 1], [1, 1], [1, 0]],
+        chart: { marks: [] },
+      },
+      user: null,
+      time: null,
+    }])).toBe(true)
+  })
+
+  it('isAnnotationArray accepts seed annotations.json', () => {
+    expect(isAnnotationArray(seedAnnotations)).toBe(true)
   })
 })

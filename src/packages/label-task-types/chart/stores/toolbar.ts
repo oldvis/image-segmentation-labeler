@@ -1,3 +1,4 @@
+import type { MarkType } from '../types'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
 export enum ToolType {
@@ -10,12 +11,12 @@ export enum ToolType {
 /** The store of toolbar state. */
 export const useStore = defineStore('toolbar-chart', {
   state: () => ({
-    /** The categories associated with the stroke */
-    stroke: [] as string[],
+    /** The mark categories associated with the stroke */
+    stroke: [] as MarkType[],
     tool: ToolType.ClickCreateRect as ToolType,
   }),
   actions: {
-    setStroke(categories: string[]): void {
+    setStroke(categories: MarkType[]): void {
       this.stroke = categories
     },
     setOperation(tool: ToolType): void {

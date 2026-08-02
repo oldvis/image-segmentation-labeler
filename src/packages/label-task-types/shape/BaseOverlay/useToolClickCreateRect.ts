@@ -1,5 +1,5 @@
 import type { Component, MaybeRef, Ref } from 'vue'
-import type { Annotation, DataObject } from '~/stores/annotation'
+import type { ImageDataObject, AnnotationCreate } from '~/stores/annotation'
 import type { Point } from '~/utils/geometry'
 import Konva from 'konva'
 import { computed, unref, watch } from 'vue'
@@ -20,8 +20,8 @@ type VueKonvaLayer = Component & { getNode: () => Konva.Layer }
 const useDateEffect = (
   points: Ref<Point[]>,
   category: Ref<string | null>,
-  dataObject: Ref<DataObject>,
-  add: (d: Omit<Annotation, 'uuid' | 'user' | 'time'>) => void,
+  dataObject: Ref<ImageDataObject>,
+  add: (d: AnnotationCreate) => void,
   enabled: MaybeRef<boolean> = true,
 ) => {
   // Finish rect creation when two points are created.
@@ -36,8 +36,12 @@ const useDateEffect = (
       value: {
         category: category.value,
         shape: ShapeType.Rect,
-        points: [[xMin, yMin], [xMin, yMax], [xMax, yMax], [xMax, yMin]]
-          .map((d) => [Math.round(d[0]), Math.round(d[1])]),
+        points: [
+          [Math.round(xMin), Math.round(yMin)],
+          [Math.round(xMin), Math.round(yMax)],
+          [Math.round(xMax), Math.round(yMax)],
+          [Math.round(xMax), Math.round(yMin)],
+        ],
       },
     })
     points.value = []
@@ -112,8 +116,8 @@ export const useVisualEffect = (
 const useTool = (
   points: Ref<Point[]>,
   category: Ref<string | null>,
-  dataObject: Ref<DataObject>,
-  add: (d: Omit<Annotation, 'uuid' | 'user' | 'time'>) => void,
+  dataObject: Ref<ImageDataObject>,
+  add: (d: AnnotationCreate) => void,
   mouse: Ref<Point | null>,
   color: Ref<string | null>,
   layer: Ref<VueKonvaLayer | undefined>,

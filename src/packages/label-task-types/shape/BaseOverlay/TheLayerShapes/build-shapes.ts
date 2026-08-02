@@ -1,6 +1,5 @@
 import type Konva from 'konva'
-import type { AnnotationShapeLike } from '../../types'
-import type { Annotation } from '~/stores/annotation'
+import type { AnnotationShapeLike, ShapeLikeValue } from '../../types'
 import { unref } from 'vue'
 import { ShapeType } from '../../types'
 import EditableCircle from './editable-circle'
@@ -9,11 +8,11 @@ import EditableRect from './editable-rect'
 
 const SHAPE_NAME = 'editable-shape'
 
-const buildKonvaCircle = (
-  annotationCircle: AnnotationShapeLike,
+const buildKonvaCircle = <T extends AnnotationShapeLike>(
+  annotationCircle: T,
   color: string,
-  onEdit: (d: Annotation) => void,
-  onSelect: (d: Annotation) => void,
+  onEdit: (d: T) => void,
+  onSelect: (d: T) => void,
   editable = true,
   strokeWidth = 1,
 ): Konva.Circle => {
@@ -32,19 +31,20 @@ const buildKonvaCircle = (
       ...annotationCircle,
       value: {
         ...annotationCircle.value,
-        points: [[point.x, point.y]],
-      },
+        shape: ShapeType.Point,
+        points: [[point.x, point.y]] as [[number, number]],
+      } as T['value'],
     })
   })
   editableCircle.setOnClick(() => onSelect(annotationCircle))
   return konvaCircle
 }
 
-const buildKonvaRect = (
-  annotationRect: AnnotationShapeLike,
+const buildKonvaRect = <T extends AnnotationShapeLike>(
+  annotationRect: T,
   color: string,
-  onEdit: (d: Annotation) => void,
-  onSelect: (d: Annotation) => void,
+  onEdit: (d: T) => void,
+  onSelect: (d: T) => void,
   editable = true,
   strokeWidth = 1,
 ): Konva.Group => {
@@ -63,24 +63,30 @@ const buildKonvaRect = (
       ...annotationRect,
       value: {
         ...annotationRect.value,
+        shape: ShapeType.Rect,
         points: [
           [xMin, yMin],
           [xMin, yMax],
           [xMax, yMax],
           [xMax, yMin],
+        ] as ShapeLikeValue['points'] & [
+          [number, number],
+          [number, number],
+          [number, number],
+          [number, number],
         ],
-      },
+      } as T['value'],
     })
   })
   editableRect.setOnClick(() => onSelect(annotationRect))
   return konvaGroup
 }
 
-const buildKonvaPolygon = (
-  annotationPolygon: AnnotationShapeLike,
+const buildKonvaPolygon = <T extends AnnotationShapeLike>(
+  annotationPolygon: T,
   color: string,
-  onEdit: (d: Annotation) => void,
-  onSelect: (d: Annotation) => void,
+  onEdit: (d: T) => void,
+  onSelect: (d: T) => void,
   editable = true,
   strokeWidth = 1,
 ): Konva.Group => {
@@ -94,24 +100,25 @@ const buildKonvaPolygon = (
     .setAttr('uuid', uuid)
   editablePolygon.getPolygon().stroke(color)
   editablePolygon.setOnUpdatePosition((d: EditablePolygon) => {
-    const points = d.points()
+    const nextPoints = d.points()
     onEdit({
       ...annotationPolygon,
       value: {
         ...annotationPolygon.value,
-        points,
-      },
+        shape: ShapeType.Polygon,
+        points: nextPoints,
+      } as T['value'],
     })
   })
   editablePolygon.setOnClick(() => onSelect(annotationPolygon))
   return konvaGroup
 }
 
-export const buildKonvaShape = (
-  annotation: AnnotationShapeLike,
+export const buildKonvaShape = <T extends AnnotationShapeLike>(
+  annotation: T,
   color: string,
-  onEdit: (d: Annotation) => void,
-  onSelect: (d: Annotation) => void,
+  onEdit: (d: T) => void,
+  onSelect: (d: T) => void,
   editable = true,
   strokeWidth = 1,
 ) => {

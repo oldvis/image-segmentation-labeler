@@ -1,4 +1,7 @@
 import type { User } from '../user/types'
+import type { AnnotationChart } from '~/packages/label-task-types/chart/types'
+import type { AnnotationMultilabelClassification } from '~/packages/label-task-types/multilabel-classification/types'
+import type { AnnotationShape } from '~/packages/label-task-types/shape/types'
 
 /** The enum of label status types. */
 export enum StatusType {
@@ -53,15 +56,12 @@ export enum Category {
 
 export type Categories = { value: Category, tasks: AnnotationType[] }[]
 
-export interface Annotation {
-  /** The type of annotation. */
-  type: AnnotationType
+/** Shared fields for every annotation variant. */
+export interface AnnotationBase {
   /** The uuid of the annotation. */
   uuid: string
   /** The uuid of the subject the annotation is associated with. */
   subject: string
-  /** The annotation content. */
-  value: unknown
   /**
    * The user providing the annotation.
    * Null when the user cannot be identified.
@@ -73,6 +73,15 @@ export interface Annotation {
    */
   time: string | null
 }
+
+/**
+ * Active annotation union (Chart | Shape | MultilabelClassification).
+ * Narrow with `annotation.type`.
+ */
+export type Annotation
+  = AnnotationChart
+    | AnnotationShape
+    | AnnotationMultilabelClassification
 
 /** Image payload for OldVis labeling subjects. */
 export interface ImageDataObjectValue {

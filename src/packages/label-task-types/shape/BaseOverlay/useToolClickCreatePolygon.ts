@@ -1,5 +1,5 @@
 import type { Component, MaybeRef, Ref } from 'vue'
-import type { Annotation, DataObject } from '~/stores/annotation'
+import type { ImageDataObject, AnnotationCreate } from '~/stores/annotation'
 import { onKeyStroke } from '@vueuse/core'
 import Konva from 'konva'
 import { computed, unref, watch } from 'vue'
@@ -20,8 +20,8 @@ type VueKonvaLayer = Component & { getNode: () => Konva.Layer }
 const useDateEffect = (
   points: Ref<Point[]>,
   category: Ref<string | null>,
-  dataObject: Ref<DataObject>,
-  add: (d: Omit<Annotation, 'uuid' | 'user' | 'time'>) => void,
+  dataObject: Ref<ImageDataObject>,
+  add: (d: AnnotationCreate) => void,
   enabled: MaybeRef<boolean> = true,
 ) => {
   // Finish polygon creation when key press enter.
@@ -138,8 +138,8 @@ export const useVisualEffect = (
 const useTool = (
   points: Ref<Point[]>,
   category: Ref<string | null>,
-  dataObject: Ref<DataObject>,
-  add: (d: Omit<Annotation, 'uuid' | 'user' | 'time'>) => void,
+  dataObject: Ref<ImageDataObject>,
+  add: (d: AnnotationCreate) => void,
   mouse: Ref<Point | null>,
   color: Ref<string | null>,
   layer: Ref<VueKonvaLayer | undefined>,

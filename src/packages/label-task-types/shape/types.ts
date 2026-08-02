@@ -1,4 +1,4 @@
-import type { Annotation, AnnotationType } from '~/stores/annotation/types'
+import type { AnnotationBase, AnnotationType } from '~/stores/annotation/types'
 
 /** The type of data shapes in polygon annotation. */
 export enum ShapeType {
@@ -37,11 +37,11 @@ interface PolygonLikeValue {
 export type ShapeLikeValue = PointLikeValue | RectLikeValue | PolygonLikeValue
 
 /**
- * The shape like annotation.
- * To be used by label tasks that extend the shape label task.
+ * Shared geometry fields for shape-like annotations.
+ * Does not include `type` (`AnnotationType.Chart` / `Shape`); variants add that
+ * plus their specialized `value` fields.
  */
-export interface AnnotationShapeLike extends Annotation {
-  /** The content of the annotation. */
+export interface AnnotationShapeLike extends AnnotationBase {
   value: ShapeLikeValue
 }
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type Konva from 'konva'
 import type { VueKonvaLayer } from './TheLayerShapes/types'
-import type { DataObject } from '~/stores/annotation'
+import type { ImageDataObject } from '~/stores/annotation'
 import { useElementSize, useMousePressed } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useAnnotations } from '../composables/annotation'
@@ -16,7 +16,7 @@ type VueKonvaStage = Component & { getNode: () => Konva.Stage }
 
 const props = defineProps({
   dataObject: {
-    type: Object as PropType<DataObject>,
+    type: Object as PropType<ImageDataObject>,
     required: true,
   },
   /**

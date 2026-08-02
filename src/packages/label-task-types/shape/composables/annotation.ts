@@ -10,6 +10,7 @@ import { useAnnotations as useBaseAnnotations } from '../../composables/annotati
  */
 export const useAnnotations = () => {
   const results = useBaseAnnotations(AnnotationType.Shape)
+  // Base already filters by Shape; cast narrows Annotation[] → AnnotationShape[].
   const annotations = results.annotations as ComputedRef<AnnotationShape[]>
   return { ...results, annotations }
 }

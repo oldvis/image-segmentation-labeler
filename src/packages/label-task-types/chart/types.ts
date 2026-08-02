@@ -21,7 +21,19 @@ export { ShapeType } from '../shape'
  * - add "point", "geoshape" from [vega-lite mark types](https://vega.github.io/vega-lite/docs/mark.html)
  * - add "isotype" (in vega, isotype is stored as "point" with "shape" in its encoding field)
  */
-export type MarkType = 'Line' | 'Point' | 'Rect' | 'Arc' | 'Area' | 'Geoshape' | 'Isotype' | 'Text' | 'Others'
+export const markTypes = [
+  'Line',
+  'Point',
+  'Rect',
+  'Arc',
+  'Area',
+  'Geoshape',
+  'Isotype',
+  'Text',
+  'Others',
+] as const
+
+export type MarkType = typeof markTypes[number]
 
 /**
  * The type of measurement.
@@ -87,7 +99,7 @@ export const schemaTypes = [SchemaType.Tabular, SchemaType.Graph]
 export interface Mark {
   /** The underlying data schema. */
   schema: SchemaType
-  /** The mark type. */
+  /** Mark kind (toolbar / chart category), e.g. `"Rect"`. */
   type: MarkType
   /** The encoded visual channels of the mark. */
   encode: Encode

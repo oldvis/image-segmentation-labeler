@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { MarkType } from '../types'
 import { storeToRefs } from 'pinia'
 import VMenuCategories from '../../components/VMenuCategories.vue'
 import VToggleShape from '../../shape/BaseToolSingle/VToggleShape.vue'
@@ -10,9 +11,14 @@ const toolbarStore = useToolbarStore()
 const { stroke, tool } = storeToRefs(toolbarStore)
 const { setStroke, setOperation } = toolbarStore
 
+// Bridge VMenuCategories' string[] emit to the toolbar's MarkType[].
+const onStrokeUpdate = (value: string[]): void => {
+  setStroke(value as MarkType[])
+}
+
 // Select the first category as the default stroke
 if (categories.value.length !== 0) {
-  setStroke([categories.value[0]])
+  setStroke([categories.value[0] as MarkType])
 }
 </script>
 
@@ -23,7 +29,7 @@ if (categories.value.length !== 0) {
       :value="stroke"
       :categories="categories"
       :category-to-color="categoryToColor"
-      @update:value="setStroke"
+      @update:value="onStrokeUpdate"
     />
     <!-- object shape toggle -->
     <VToggleShape

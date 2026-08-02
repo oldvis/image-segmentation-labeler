@@ -1,6 +1,6 @@
 import type Konva from 'konva'
 import type { Component, MaybeRef, Ref } from 'vue'
-import type { Annotation, DataObject } from '~/stores/annotation'
+import type { ImageDataObject, AnnotationCreate } from '~/stores/annotation'
 import { computed } from 'vue'
 import { ToolType } from '../stores/toolbar'
 import useToolClickCreatePoint from './useToolClickCreatePoint'
@@ -26,8 +26,8 @@ type VueKonvaLayer = Component & { getNode: () => Konva.Layer }
 const useTools = (
   points: Ref<Point[]>,
   category: Ref<string | null>,
-  dataObject: Ref<DataObject>,
-  add: (d: Omit<Annotation, 'uuid' | 'user' | 'time'>) => void,
+  dataObject: Ref<ImageDataObject>,
+  add: (d: AnnotationCreate) => void,
   mouse: Ref<Point | null>,
   color: Ref<string | null>,
   layer: Ref<VueKonvaLayer | undefined>,

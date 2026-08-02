@@ -11,6 +11,7 @@ import { useAnnotations as useBaseAnnotations } from '../../composables/annotati
  */
 export const useAnnotations = () => {
   const results = useBaseAnnotations(AnnotationType.Chart)
+  // Base already filters by Chart; cast narrows Annotation[] → AnnotationChart[].
   const annotations = results.annotations as ComputedRef<AnnotationChart[]>
   const { categoryToColor } = results
   const categoriesToColor = computed(() => (categories: string[]): string => {
