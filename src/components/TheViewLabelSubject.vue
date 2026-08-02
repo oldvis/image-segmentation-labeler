@@ -18,11 +18,20 @@ const shown = computed(() => (
   )
 ))
 
+const positionLabel = computed(() => {
+  const total = dataObjects.value.length
+  if (total === 0) return '0 of 0'
+  const from = startIndex.value + 1
+  const to = Math.min(startIndex.value + shownNumber.value, total)
+  if (from === to) return `${from} of ${total}`
+  return `${from}-${to} of ${total}`
+})
+
 /** Show n more entries. */
 const showNext = (n: number): void => {
   // Mark leaving entries as Labeled (not Viewed). In segmentation, an empty
   // annotation set can be a valid completion — nothing to segment — so navigating
-  // away is treated as done. A dedicated skip/confirm-empty flow would refine this.
+  // away is treated as done.
   const shownUuids = new Set(shown.value.map((d) => d.uuid))
   statuses.value = statuses.value.map((d) => (
     shownUuids.has(d.uuid) ? { ...d, value: StatusType.Labeled } : d
@@ -50,7 +59,7 @@ watch(shown, () => {
     <div
       v-if="shown.length !== 0"
       ref="content"
-      class="scroll-smooth flex-1 gap-1 overflow-auto"
+      class="scroll-smooth flex-1 gap-2 overflow-auto"
       flex="~ col"
     >
       <VDataEntry
@@ -60,24 +69,29 @@ watch(shown, () => {
         :index="startIndex + i + 1"
         class="flex-1"
       />
-      <div class="flex gap-1">
+      <div class="flex gap-2 items-center">
         <button
-          btn
+          type="button"
+          btn-secondary
           data-testid="nav-previous"
           :title="`Show previous ${shownNumber} entries`"
           :disabled="startIndex === 0"
           @click="showNext(-shownNumber)"
         >
-          <div>previous {{ shownNumber }} {{ shownNumber === 1 ? 'entry' : 'entries' }}</div>
+          Previous
         </button>
+        <div class="text-sm text-gray-600 px-2 tabular-nums dark:text-gray-300">
+          {{ positionLabel }}
+        </div>
         <button
+          type="button"
           btn
           data-testid="nav-next"
           :title="`Show next ${shownNumber} entries`"
           :disabled="startIndex + shownNumber >= dataObjects.length"
           @click="showNext(shownNumber)"
         >
-          <div>next {{ shownNumber }} {{ shownNumber === 1 ? 'entry' : 'entries' }}</div>
+          Next
         </button>
       </div>
     </div>

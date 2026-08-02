@@ -19,8 +19,10 @@ declare module 'vue' {
     TheViewLabelResult: typeof import('./src/components/TheViewLabelResult.vue')['default']
     TheViewLabelSubject: typeof import('./src/components/TheViewLabelSubject.vue')['default']
     TheViewToolbar: typeof import('./src/components/TheViewToolbar.vue')['default']
+    VCollapseSection: typeof import('./src/components/VCollapseSection.vue')['default']
     VDataEntry: typeof import('./src/components/VDataEntry.vue')['default']
     VDialog: typeof import('./src/components/VDialog.vue')['default']
+    VFormField: typeof import('./src/components/VFormField.vue')['default']
     VMessage: typeof import('./src/components/VMessage.vue')['default']
     VMessages: typeof import('./src/components/VMessages.vue')['default']
   }

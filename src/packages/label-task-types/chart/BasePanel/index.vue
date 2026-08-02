@@ -14,17 +14,16 @@ const {
 </script>
 
 <template>
-  <div view-container>
+  <div view-container class="h-full">
     <div view-header>
-      <div class="i-fa6-solid:info" />
-      <div class="font-bold">
+      <div class="i-fa6-solid:info text-gray-500" />
+      <div class="font-semibold">
         Spans
       </div>
     </div>
     <div
       data-testid="spans-panel"
-      class="p-1 gap-1 overflow-auto"
-      flex="~ col"
+      panel-stack
     >
       <VLabelShape
         v-for="d in annotations"

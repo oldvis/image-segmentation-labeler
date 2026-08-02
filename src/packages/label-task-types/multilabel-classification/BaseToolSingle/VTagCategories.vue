@@ -27,15 +27,18 @@ const isSelected = (category: string): boolean => {
     <button
       v-for="d in categories"
       :key="d"
-      icon-btn
+      type="button"
       :data-testid="`tag-${d}`"
-      class="px-1 border rounded flex gap-1 items-center"
-      :class="isSelected(d) ? 'selected' : ''"
+      class="text-sm tool-btn px-2 border rounded flex gap-1 items-center"
+      :class="isSelected(d) ? 'tool-btn-active' : ''"
+      :aria-pressed="isSelected(d) ? 'true' : 'false'"
+      :aria-label="d"
       @click="toggleCategory(d)"
     >
       <div
         class="i-fa6-solid:square"
         :style="{ color: categoryToColor(d) }"
+        aria-hidden="true"
       />
       {{ d }}
     </button>

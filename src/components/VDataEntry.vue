@@ -23,8 +23,8 @@ const filename = computed(() => datum.value.value.filename)
 
 <template>
   <div
-    class="text-sm p-1"
-    bg="slate-100 dark:slate-900"
+    class="text-sm p-2"
+    bg="slate-50 dark:slate-900"
     border="~ gray-200"
     flex="~ col"
   >

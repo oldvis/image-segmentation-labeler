@@ -25,4 +25,15 @@ describe('multilabel useAnnotations', () => {
     const { dataObject } = useAnnotations()
     expect(() => dataObject.value).toThrow(/more than one data object/)
   })
+
+  it('throws when more than one multilabel annotation exists for the subject', () => {
+    const store = useAnnotationStore()
+    store.selectedDataObjects = [makeDataObject('img-1')]
+    store.annotations = [
+      makeMultilabelAnnotation({ uuid: 'm-old', subject: 'img-1', value: ['Vis'] }),
+      makeMultilabelAnnotation({ uuid: 'm-new', subject: 'img-1', value: ['Not Vis'] }),
+    ]
+    const { multilabel } = useAnnotations()
+    expect(() => multilabel.value).toThrow(/more than one annotation/)
+  })
 })

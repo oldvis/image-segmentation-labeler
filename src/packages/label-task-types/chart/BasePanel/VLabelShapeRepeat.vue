@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Repeat } from '../types'
+import VFormField from '~/components/VFormField.vue'
 import VMenuMultiSelect from './VMenuMultiSelect.vue'
 
 const props = defineProps<{
@@ -44,42 +45,50 @@ const updateRepeatColumn = (column: number): void => {
 </script>
 
 <template>
-  <div class="flex gap-2 items-center">
-    <b>Repeat</b>
-    <VMenuMultiSelect
-      :value="repeatMenuValue"
-      :options="repeatMenuOptions"
-      @update:value="updateRepeat"
-    />
-    <div
-      v-if="repeat?.row !== undefined"
-      class="flex gap-2 items-center"
+  <div class="flex flex-col gap-2">
+    <VFormField
+      v-slot="{ id }"
+      label="Axes"
+      label-class="w-16"
     >
-      <b>Row</b>
+      <VMenuMultiSelect
+        :id="id"
+        :value="repeatMenuValue"
+        :options="repeatMenuOptions"
+        @update:value="updateRepeat"
+      />
+    </VFormField>
+    <VFormField
+      v-if="repeat?.row !== undefined"
+      v-slot="{ id }"
+      label="Row"
+      label-class="w-16"
+    >
       <input
+        :id="id"
         :value="repeat?.row"
-
-        class="w-12"
+        class="w-16"
         type="number"
         min="1"
         required input-area
         @input="updateRepeatRow(+($event.target as HTMLInputElement).value)"
       >
-    </div>
-    <div
+    </VFormField>
+    <VFormField
       v-if="repeat?.column !== undefined"
-      class="flex gap-2 items-center"
+      v-slot="{ id }"
+      label="Column"
+      label-class="w-16"
     >
-      <b>Column</b>
       <input
+        :id="id"
         :value="repeat?.column"
-
-        class="w-12"
+        class="w-16"
         type="number"
         min="1"
         required input-area
         @input="updateRepeatColumn(+($event.target as HTMLInputElement).value)"
       >
-    </div>
+    </VFormField>
   </div>
 </template>

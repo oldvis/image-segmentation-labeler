@@ -4,6 +4,7 @@ import { onClickOutside } from '@vueuse/core'
 const props = defineProps<{
   value: T[]
   options: T[]
+  id?: string
 }>()
 
 const emit = defineEmits<{
@@ -34,6 +35,8 @@ const isSelected = (category: T): boolean => {
   <div flex="~ col">
     <div class="h-16.8px inline-block relative">
       <button
+        :id="id"
+        type="button"
         icon-btn
         title="add"
         @click="show = true"

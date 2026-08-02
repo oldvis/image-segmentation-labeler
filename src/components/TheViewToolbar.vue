@@ -5,19 +5,28 @@ import { BaseToolSingle as BaseToolSingleMultilabel } from '~/packages/label-tas
 
 <template>
   <div
-    class="flex gap-1"
-    border="~ gray-200"
+    class="workspace-band flex flex-wrap items-stretch"
+    workspace-gap
   >
-    <div class="text-sm p-1 flex gap-1">
-      <div class="i-fa6-solid:toolbox my-auto" />
-      <div class="font-bold my-auto">
+    <div toolbar-group>
+      <div class="i-fa6-solid:toolbox text-gray-500" />
+      <div toolbar-label>
         Tools
       </div>
     </div>
-    <div class="my-1 border-l" />
-    <BaseToolSingleChart />
-    <div class="my-1 border-l" />
-    <BaseToolSingleMultilabel class="my-1" />
-    <div class="my-1 border-l" />
+    <div class="my-1 border-l border-gray-200 dark:border-gray-700" />
+    <div toolbar-group class="min-w-0">
+      <div toolbar-label>
+        Draw
+      </div>
+      <BaseToolSingleChart />
+    </div>
+    <div class="my-1 border-l border-gray-200 dark:border-gray-700" />
+    <div toolbar-group class="min-w-0">
+      <div toolbar-label>
+        Tags
+      </div>
+      <BaseToolSingleMultilabel />
+    </div>
   </div>
 </template>

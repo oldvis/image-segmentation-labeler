@@ -24,7 +24,7 @@ const bbox = computed(() => getBBox(props.points))
 </script>
 
 <template>
-  <div class="flex">
+  <div class="text-sm flex flex-wrap gap-x-3 gap-y-1">
     <template v-if="shape === ShapeType.Point">
       <div class="flex grow gap-1 items-center">
         <b>x</b>

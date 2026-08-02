@@ -1,9 +1,10 @@
 <script setup lang="ts" generic="T">
 import { onClickOutside } from '@vueuse/core'
 
-const { value, options } = defineProps<{
+const { value, options, id } = defineProps<{
   value: T
   options: T[]
+  id?: string
 }>()
 const emit = defineEmits<{
   (e: 'update:value', value: T): void
@@ -19,6 +20,7 @@ onClickOutside(menu, () => {
   <div flex="~ col">
     <div class="inline-block relative">
       <button
+        :id="id"
         class="px-1 border rounded flex"
         type="button"
         @click="show = true"

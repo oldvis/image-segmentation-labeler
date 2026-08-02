@@ -6,13 +6,13 @@ useSignInNotice()
 
 <template>
   <div
-    class="m-1 grow gap-1 overflow-auto"
+    class="workspace-gap m-2 grow overflow-auto"
     flex="~ col"
   >
     <TheViewToolbar />
-    <div class="flex grow gap-1 overflow-auto">
-      <TheViewLabelSubject class="basis-7/10 overflow-auto" />
-      <TheViewLabelResult class="basis-3/10" />
+    <div class="workspace-gap flex grow min-h-0 overflow-auto">
+      <TheViewLabelSubject class="basis-7/10 min-w-0 overflow-auto" />
+      <TheViewLabelResult class="basis-3/10 min-w-0" />
     </div>
     <TheViewLabelProgress />
   </div>

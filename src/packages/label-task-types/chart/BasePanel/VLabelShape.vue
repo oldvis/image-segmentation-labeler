@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
 import type { AnnotationChart, Encode, Mark, MarkType, Repeat } from '../types'
+import VCollapseSection from '~/components/VCollapseSection.vue'
+import VFormField from '~/components/VFormField.vue'
 import { SchemaType } from '../types'
 import VLabelShapeMark from './VLabelShapeMark.vue'
 import VLabelShapePosition from './VLabelShapePosition.vue'
@@ -30,6 +32,12 @@ const emit = defineEmits<{
   (e: 'update', annotation: AnnotationChart): void
   (e: 'remove', annotation: AnnotationChart): void
 }>()
+
+const sections = ref({
+  details: false,
+  repeat: false,
+  marks: false,
+})
 
 const updateTitle = (e: Event): void => {
   const { annotation } = props
@@ -103,107 +111,139 @@ const removeMark = (i: number): void => {
 <template>
   <div
     data-testid="span-card"
-    class="p-1 border rounded gap-1"
+    class="p-2 border rounded gap-2"
     flex="~ col"
-    :class="{ '!selected': isSelected }"
+    :class="{ selected: isSelected }"
     @click="$emit('select', annotation)"
   >
-    <div class="flex">
+    <div class="flex gap-2 items-center">
       <div fixed-value-container>
         Chart
       </div>
-      <div class="grow" />
-      <div class="px-1 flex gap-1">
-        <b>Shape</b>
+      <div class="text-sm flex gap-1 items-center">
+        <div class="text-gray-500">
+          Shape
+        </div>
         <div fixed-value-container>
           {{ annotation.value.shape }}
         </div>
       </div>
+      <div class="grow" />
       <button
-        title="remove"
+        type="button"
+        title="Remove chart"
+        aria-label="Remove chart"
         class="icon-btn"
         @click.stop="$emit('remove', annotation)"
       >
         <div class="i-fa6-solid:trash" />
       </button>
     </div>
+
     <VLabelShapePosition
-      class="mx-1"
       :points="annotation.value.points"
       :shape="annotation.value.shape"
     />
+
     <div
       v-if="annotation.user !== null"
-      class="mx-1 flex gap-1"
+      class="text-sm mx-0 flex flex-wrap gap-2 items-center"
     >
-      <b>last modified by</b>
+      <div class="text-gray-500">
+        Last modified by
+      </div>
       <div fixed-value-container>
         {{ annotation.user.name }}
       </div>
     </div>
 
-    <div border="t" />
+    <div border="t gray-200" />
 
-    <div class="mx-1 flex gap-2 items-center">
-      <b>Title</b>
-      <input
-        :value="annotation.value.chart.title"
+    <VCollapseSection
+      title="Details"
+      :open="sections.details"
+      @update:open="sections.details = $event"
+    >
+      <div class="flex flex-col gap-2">
+        <VFormField
+          v-slot="{ id }"
+          label="Title"
+        >
+          <input
+            :id="id"
+            :value="annotation.value.chart.title"
 
-        class="grow"
-        placeholder="chart title"
-        required input-area
-        @input="updateTitle"
-      >
-    </div>
+            class="w-full"
+            placeholder="chart title"
+            required input-area
+            @input="updateTitle"
+          >
+        </VFormField>
+        <VFormField
+          v-slot="{ id }"
+          label="Theme"
+        >
+          <input
+            :id="id"
+            :value="annotation.value.chart.theme"
 
-    <div class="mx-1 flex gap-2 items-center">
-      <b>Theme</b>
-      <input
-        :value="annotation.value.chart.theme"
+            class="w-full"
+            placeholder="content theme"
+            required input-area
+            @input="updateTheme"
+          >
+        </VFormField>
+        <VFormField
+          v-slot="{ id }"
+          label="Language"
+        >
+          <input
+            :id="id"
+            :value="annotation.value.chart.language"
 
-        class="grow"
-        placeholder="content theme"
-        required input-area
-        @input="updateTheme"
-      >
-    </div>
+            class="w-full"
+            placeholder="language used"
+            required input-area
+            @input="updateLanguage"
+          >
+        </VFormField>
+      </div>
+    </VCollapseSection>
 
-    <div class="mx-1 flex gap-2 items-center">
-      <b>Language</b>
-      <input
-        :value="annotation.value.chart.language"
+    <div border="t gray-200" />
 
-        class="grow"
-        placeholder="language used"
-        required input-area
-        @input="updateLanguage"
-      >
-    </div>
+    <VCollapseSection
+      title="Repeat"
+      :open="sections.repeat"
+      @update:open="sections.repeat = $event"
+    >
+      <VLabelShapeRepeat
+        :repeat="annotation.value.chart.repeat"
+        @update:repeat="updateRepeat"
+      />
+    </VCollapseSection>
 
-    <div border="t" />
+    <div border="t gray-200" />
 
-    <VLabelShapeRepeat
-      class="mx-1"
-      :repeat="annotation.value.chart.repeat"
-      @update:repeat="updateRepeat"
-    />
-
-    <div border="t" />
-
-    <div>
-      <div class="px-1 flex gap-2">
-        <b>Marks</b>
+    <VCollapseSection
+      title="Marks"
+      :open="sections.marks"
+      @update:open="sections.marks = $event"
+    >
+      <template #actions>
         <button
+          type="button"
           icon-btn
-          title="add"
-          @click="addMark"
+          title="Add mark"
+          aria-label="Add mark"
+          @click.stop="addMark"
         >
           <div class="i-fa6-solid:plus m-auto" />
         </button>
-      </div>
+      </template>
       <div
         v-if="annotation.value.chart.marks.length !== 0"
-        class="gap-1"
+        class="gap-2"
         flex="~ col"
       >
         <VLabelShapeMark
@@ -217,6 +257,12 @@ const removeMark = (i: number): void => {
           @remove="removeMark(i)"
         />
       </div>
-    </div>
+      <div
+        v-else
+        class="text-sm text-gray-500"
+      >
+        No marks yet. Use + to add one.
+      </div>
+    </VCollapseSection>
   </div>
 </template>

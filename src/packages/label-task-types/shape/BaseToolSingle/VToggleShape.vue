@@ -44,11 +44,13 @@ const btns = [
     <button
       v-for="btn in btns"
       :key="btn.value"
-      icon-btn
+      type="button"
       :data-testid="`tool-${btn.value}`"
       :title="btn.title"
+      :aria-label="btn.title"
+      :aria-pressed="value === btn.value ? 'true' : 'false'"
       :disabled="disabled"
-      :class="value === btn.value ? 'selected' : 'opacity-50'"
+      :class="value === btn.value ? 'tool-btn-active' : 'tool-btn opacity-60'"
       @click="emit('update:value', btn.value)"
     >
       <div :class="btn.icon" />

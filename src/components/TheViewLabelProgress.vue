@@ -18,10 +18,17 @@ const nLabeled = computed(() => (
   statuses.value.filter((d) => d.value === StatusType.Labeled).length
 ))
 
-const save = () => {
+const stats = computed(() => ([
+  { title: 'Unlabeled', value: nUnlabeled.value },
+  { title: 'Labeled', value: nLabeled.value },
+  { title: 'Skipped', value: nSkipped.value },
+]))
+
+const save = (): void => {
   saveJsonFile(annotations.value, 'annotation.json')
 }
-const upload = async () => {
+
+const upload = async (): Promise<void> => {
   try {
     const data = await uploadJsonFile()
     if (data === null) return
@@ -39,51 +46,44 @@ const upload = async () => {
 </script>
 
 <template>
-  <div
-    class="px-1 flex gap-1"
-    border="~ gray-200"
-  >
-    <div class="text-sm flex gap-1">
-      <div class="i-fa6-solid:list-check my-auto" />
-      <div class="font-bold my-auto">
+  <div class="workspace-band px-2 py-1.5 flex flex-wrap gap-2 items-center">
+    <div class="text-sm flex gap-2 items-center">
+      <div class="i-fa6-solid:list-check text-gray-500" />
+      <div class="font-semibold">
         Progress
       </div>
     </div>
     <div class="grow" />
-    <div class="text-sm flex gap-1">
-      <template
-        v-for="(d, i) in [
-          { title: '#Not-Yet-Labeled:', value: nUnlabeled },
-          { title: '#Labeled:', value: nLabeled },
-          { title: '#Skipped:', value: nSkipped },
-        ]" :key="d.title"
+    <div class="text-sm flex flex-wrap gap-3 items-center">
+      <div
+        v-for="d in stats"
+        :key="d.title"
+        class="flex gap-1 items-center"
       >
-        <div v-if="i === 0" class="my-1 border-l" />
-        <div class="my-auto flex gap-1">
-          {{ d.title }}
-          <div
-            class="font-bold"
-            :data-testid="d.title === '#Labeled:' ? 'progress-labeled-count' : undefined"
-          >
-            {{ d.value }}
-          </div>
-        </div>
-        <div class="my-1 border-l" />
-      </template>
-      <div class="my-1 flex gap-1">
+        <span class="text-gray-500">{{ d.title }}</span>
+        <span
+          class="font-semibold tabular-nums"
+          :data-testid="d.title === 'Labeled' ? 'progress-labeled-count' : undefined"
+        >
+          {{ d.value }}
+        </span>
+      </div>
+      <div class="flex gap-2">
         <button
-          btn
+          type="button"
+          btn-secondary
           data-testid="annotations-download"
           @click="save"
         >
-          download
+          Download
         </button>
         <button
-          btn
+          type="button"
+          btn-secondary
           data-testid="annotations-upload"
           @click="upload"
         >
-          upload
+          Upload
         </button>
       </div>
     </div>

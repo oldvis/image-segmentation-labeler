@@ -1,3 +1,4 @@
+import type { ComputedRef } from 'vue'
 import type { AnnotationMultilabelClassification } from '../types'
 import type { ImageDataObject } from '~/stores/annotation'
 import { storeToRefs } from 'pinia'
