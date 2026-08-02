@@ -42,7 +42,12 @@ const useDateEffect = (
 }
 
 /**
- * Use the ClickCreateRect tool's effect on the interface.
+ * Rubber-band polygon while click/drag-create is in progress.
+ *
+ * Preview lines use `listening: false` (same reason as rect preview): they are
+ * rebuilt on mousemove and must not steal stage hits, or the next vertex click
+ * is dropped.
+ *
  * @param points The points (list of <x, y>) of (partially) created shape annotation.
  * @param mouse The current mouse position <x, y>.
  * @param color The color of the shape to be created
@@ -77,6 +82,7 @@ export const useVisualEffect = (
       strokeWidth: unref(strokeWidth),
       opacity: 0.5,
       closed: false,
+      listening: false,
     }
   })
   watch(activePolygonConfig, () => {
@@ -109,6 +115,7 @@ export const useVisualEffect = (
       strokeWidth: unref(strokeWidth),
       opacity: 0.5,
       closed: false,
+      listening: false,
     }
   })
   watch(activeClosingEdgeConfig, () => {

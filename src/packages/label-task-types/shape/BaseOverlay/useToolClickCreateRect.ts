@@ -49,7 +49,14 @@ const useDateEffect = (
 }
 
 /**
- * Use the ClickCreateRect tool's effect on the interface.
+ * Rubber-band rect while click-create is in progress.
+ *
+ * Preview nodes use `listening: false` and should live on a non-listening
+ * layer: they are destroy/recreate'd on mousemove, and if they took hits,
+ * Konva would often fail to emit `click` for the next corner (mousedown and
+ * mouseup would not land on the same shape instance). Create tools record
+ * points on stage mousedown instead.
+ *
  * @param points The points (list of <x, y>) of (partially) created shape annotation.
  * @param mouse The current mouse position <x, y>.
  * @param color The color of the shape to be created
@@ -87,6 +94,7 @@ export const useVisualEffect = (
       stroke: color.value,
       strokeWidth: unref(strokeWidth),
       opacity: 0.5,
+      listening: false,
     }
   })
   watch(activeRectConfig, () => {

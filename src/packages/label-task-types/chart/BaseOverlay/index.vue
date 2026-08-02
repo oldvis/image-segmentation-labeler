@@ -118,14 +118,26 @@ watch(stroke, () => (points.value = []))
 
 const isLayerShapesListening = computed(() => points.value.length === 0)
 
-const onClickStage = (e: Konva.KonvaEventObject<MouseEvent>) => {
+/**
+ * Record create-tool points on mousedown (not `@click`).
+ *
+ * Why not click: Konva only fires `click` when mousedown and mouseup hit the
+ * same shape *instance*. After the first corner, the rubber-band preview on
+ * `layerInteraction` sits under the cursor and is destroy/recreate'd on every
+ * mousemove, so the second corner often never got a `click`. Mousedown commits
+ * the point on press and does not depend on that pairing.
+ *
+ * Also keep `layerInteraction` / preview nodes at `listening: false` so the
+ * preview never becomes the hit target (defense in depth).
+ */
+const onMouseDownStage = (e: Konva.KonvaEventObject<MouseEvent>) => {
   if (stage.value === undefined) return
   const isTargetStage = e.target === stage.value.getNode()
 
   // Deselect the previous selected objects.
   if (isTargetStage) select(null)
 
-  // Only count clicking the stage itself as creating points
+  // Only count pressing the stage itself as creating points
   // to avoid creating points when trying to select a shape.
   if (
     (isTargetStage || points.value.length >= 1)
@@ -183,12 +195,17 @@ const { scale, position } = useTransform(container, contentWidth, contentHeight)
       }"
       style="position: absolute"
       :style="selectedAnnotationUuids.length === 0 ? 'cursor: crosshair' : ''"
-      @click="onClickStage"
+      @mousedown="onMouseDownStage"
       @mousemove="onMouseMoveStage"
     >
+      <!--
+        Rubber-band previews only. listening:false so they never steal hits from
+        the stage (preview nodes are rebuilt on mousemove; if they listened,
+        Konva click pairing would drop the next create corner.
+      -->
       <v-layer
         ref="layerInteraction"
-        :config="{ imageSmoothingEnabled: false }"
+        :config="{ imageSmoothingEnabled: false, listening: false }"
         style="image-rendering: pixelated"
       />
       <TheLayerShapes
