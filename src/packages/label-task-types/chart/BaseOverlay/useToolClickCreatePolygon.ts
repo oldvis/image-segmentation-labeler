@@ -2,14 +2,13 @@ import type Konva from 'konva'
 import type { Component, MaybeRef, Ref } from 'vue'
 import type { MarkType } from '../types'
 import type { AnnotationCreate, ImageDataObject } from '~/stores/annotation'
+import type { Point } from '~/utils/geometry'
 import { onKeyStroke } from '@vueuse/core'
 import { unref } from 'vue'
 import { AnnotationType } from '~/stores/annotation'
-import { ShapeType } from '../../shape'
 import { useVisualEffect } from '../../shape/BaseOverlay/useToolClickCreatePolygon'
-import { SchemaType } from '../types'
+import { buildChartPolygonValue } from './buildChartValue'
 
-type Point = [number, number]
 type VueKonvaLayer = Component & { getNode: () => Konva.Layer }
 
 /**
@@ -34,17 +33,7 @@ const useDateEffect = (
     add({
       type: AnnotationType.Chart,
       subject: dataObject.value.uuid,
-      value: {
-        shape: ShapeType.Polygon,
-        points: points.value.map((d) => [Math.round(d[0]), Math.round(d[1])]),
-        chart: {
-          marks: categories.value.map((d) => ({
-            schema: SchemaType.Tabular,
-            type: d,
-            encode: {},
-          })),
-        },
-      },
+      value: buildChartPolygonValue(points.value, categories.value),
     })
     points.value = []
   })

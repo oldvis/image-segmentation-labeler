@@ -2,19 +2,18 @@ import type Konva from 'konva'
 import type { Component, MaybeRef, Ref } from 'vue'
 import type { MarkType } from '../types'
 import type { AnnotationCreate, ImageDataObject } from '~/stores/annotation'
+import type { Point } from '~/utils/geometry'
 import { useMousePressed } from '@vueuse/core'
 import { unref, watch } from 'vue'
 import { AnnotationType } from '~/stores/annotation'
-import { ShapeType } from '../../shape'
 import simplify from '../../shape/BaseOverlay/simplify'
 import { useVisualEffect } from '../../shape/BaseOverlay/useToolClickCreatePolygon'
-import { SchemaType } from '../types'
+import { buildChartPolygonValue } from './buildChartValue'
 
-type Point = [number, number]
 type VueKonvaLayer = Component & { getNode: () => Konva.Layer }
 
 /**
- * Use the ClickCreatePolygon tool's effect on the data store.
+ * Use the DragCreatePolygon tool's effect on the data store.
  * @param points The points (list of <x, y>) of (partially) created shape annotation.
  * @param categories The categories of the shape annotation.
  * @param dataObject The data object to which the shape annotation is attached.
@@ -40,7 +39,7 @@ const useDateEffect = (
 
     // Simplify the contour.
     const pts = simplify(
-      points.value.map((d) => [Math.round(d[0]), Math.round(d[1])]),
+      points.value.map((d): Point => [Math.round(d[0]), Math.round(d[1])]),
       0,
       false,
     )
@@ -52,24 +51,14 @@ const useDateEffect = (
     add({
       type: AnnotationType.Chart,
       subject: dataObject.value.uuid,
-      value: {
-        shape: ShapeType.Polygon,
-        points: pts,
-        chart: {
-          marks: categories.value.map((d) => ({
-            schema: SchemaType.Tabular,
-            type: d,
-            encode: {},
-          })),
-        },
-      },
+      value: buildChartPolygonValue(pts, categories.value),
     })
     points.value = []
   })
 }
 
 /**
- * Use the ClickCreatePolygon tool.
+ * Use the DragCreatePolygon tool.
  * @param points The points (list of <x, y>) of (partially) created shape annotation.
  * @param categories The categories of the shape annotation.
  * @param dataObject The data object to which the shape annotation is attached.

@@ -5,10 +5,8 @@ import type { AnnotationCreate, ImageDataObject } from '~/stores/annotation'
 import type { Point } from '~/utils/geometry'
 import { unref, watch } from 'vue'
 import { AnnotationType } from '~/stores/annotation'
-import { getBBox } from '~/utils/geometry'
-import { ShapeType } from '../../shape'
 import { useVisualEffect } from '../../shape/BaseOverlay/useToolClickCreateRect'
-import { SchemaType } from '../types'
+import { buildChartRectValue } from './buildChartValue'
 
 type VueKonvaLayer = Component & { getNode: () => Konva.Layer }
 
@@ -32,26 +30,10 @@ const useDateEffect = (
     if (!unref(enabled)) return
     if (points.value.length > 2) throw new Error('points length > 2 when creating rect')
     if (categories.value.length === 0 || points.value.length !== 2) return
-    const { xMin, xMax, yMin, yMax } = getBBox(points.value)
     add({
       type: AnnotationType.Chart,
       subject: dataObject.value.uuid,
-      value: {
-        shape: ShapeType.Rect,
-        points: [
-          [Math.round(xMin), Math.round(yMin)],
-          [Math.round(xMin), Math.round(yMax)],
-          [Math.round(xMax), Math.round(yMax)],
-          [Math.round(xMax), Math.round(yMin)],
-        ],
-        chart: {
-          marks: categories.value.map((d) => ({
-            schema: SchemaType.Tabular,
-            type: d,
-            encode: {},
-          })),
-        },
-      },
+      value: buildChartRectValue(points.value, categories.value),
     })
     points.value = []
   })

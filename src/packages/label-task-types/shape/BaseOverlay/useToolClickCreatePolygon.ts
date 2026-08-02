@@ -1,5 +1,5 @@
 import type { Component, MaybeRef, Ref } from 'vue'
-import type { ImageDataObject, AnnotationCreate } from '~/stores/annotation'
+import type { AnnotationCreate, ImageDataObject } from '~/stores/annotation'
 import { onKeyStroke } from '@vueuse/core'
 import Konva from 'konva'
 import { computed, unref, watch } from 'vue'

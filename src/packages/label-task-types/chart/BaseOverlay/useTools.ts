@@ -1,3 +1,8 @@
+/**
+ * Intentional thin chart router: same tool matrix as shape `useTools`, but
+ * wires chart create hooks (MarkType[] categories + Chart payloads). Not
+ * merged with shape — category arity and tool modules differ.
+ */
 import type Konva from 'konva'
 import type { Component, MaybeRef, Ref } from 'vue'
 import type { MarkType } from '../types'

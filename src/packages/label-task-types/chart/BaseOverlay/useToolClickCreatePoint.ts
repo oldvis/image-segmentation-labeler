@@ -1,12 +1,10 @@
 import type { MaybeRef, Ref } from 'vue'
 import type { MarkType } from '../types'
 import type { AnnotationCreate, ImageDataObject } from '~/stores/annotation'
+import type { Point } from '~/utils/geometry'
 import { unref, watch } from 'vue'
 import { AnnotationType } from '~/stores/annotation'
-import { ShapeType } from '../../shape'
-import { SchemaType } from '../types'
-
-type Point = [number, number]
+import { buildChartPointValue } from './buildChartValue'
 
 /**
  * Use the ClickCreatePoint tool.
@@ -28,21 +26,10 @@ const useTool = (
     if (!unref(enabled)) return
     if (points.value.length > 1) throw new Error('points length > 1 when creating point')
     if (categories.value.length === 0 || points.value.length !== 1) return
-    const [x, y] = points.value[0]
     add({
       type: AnnotationType.Chart,
       subject: dataObject.value.uuid,
-      value: {
-        shape: ShapeType.Point,
-        points: [[Math.round(x), Math.round(y)]],
-        chart: {
-          marks: categories.value.map((d) => ({
-            schema: SchemaType.Tabular,
-            type: d,
-            encode: {},
-          })),
-        },
-      },
+      value: buildChartPointValue(points.value[0], categories.value),
     })
     points.value = []
   })

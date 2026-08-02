@@ -1,19 +1,15 @@
 import type { MarkType } from '../types'
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import { ToolType } from '../../shape/types'
 
-export enum ToolType {
-  ClickCreatePolygon = 'ClickCreatePolygon',
-  ClickCreateRect = 'ClickCreateRect',
-  ClickCreatePoint = 'ClickCreatePoint',
-  DragCreatePolygon = 'DragCreatePolygon',
-}
+export { ToolType }
 
 /** The store of toolbar state. */
 export const useStore = defineStore('toolbar-chart', {
   state: () => ({
     /** The mark categories associated with the stroke */
     stroke: [] as MarkType[],
-    tool: ToolType.ClickCreateRect as ToolType,
+    tool: ToolType.ClickCreateRect,
   }),
   actions: {
     setStroke(categories: MarkType[]): void {

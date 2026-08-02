@@ -7,6 +7,14 @@ export enum ShapeType {
   Point = 'Point',
 }
 
+/** Drawing tools for create-shape UI (shared by VToggleShape and chart toolbar). */
+export enum ToolType {
+  ClickCreatePolygon = 'ClickCreatePolygon',
+  ClickCreateRect = 'ClickCreateRect',
+  ClickCreatePoint = 'ClickCreatePoint',
+  DragCreatePolygon = 'DragCreatePolygon',
+}
+
 type Point = [number, number]
 
 interface PointLikeValue {

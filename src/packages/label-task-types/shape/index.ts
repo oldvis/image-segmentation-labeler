@@ -1,4 +1,2 @@
-export { default as BaseOverlay } from './BaseOverlay/index.vue'
-export { default as BasePanel } from './BasePanel/index.vue'
-export { default as BaseToolSingle } from './BaseToolSingle/index.vue'
+export { default as VToggleShape } from './BaseToolSingle/VToggleShape.vue'
 export * from './types'

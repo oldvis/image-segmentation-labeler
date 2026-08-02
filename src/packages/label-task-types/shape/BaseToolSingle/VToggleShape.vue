@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ToolType } from '../stores/toolbar'
+import { ToolType } from '../types'
 
 defineProps({
   value: {
