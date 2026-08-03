@@ -3,7 +3,8 @@ import antfu from '@antfu/eslint-config'
 export default antfu(
   {
     unocss: true,
-    formatters: true,
+    // Requires eslint-plugin-format when true; keep off until that dep is added.
+    formatters: false,
     pnpm: true,
     ignores: [
       'src/**/*.json',

@@ -1,3 +1,4 @@
+import { createRequire } from 'node:module'
 import {
   defineConfig,
   presetAttributify,
@@ -5,6 +6,10 @@ import {
   presetWebFonts,
   presetWind4,
 } from 'unocss'
+
+// Node 25+ rejects bare JSON ESM imports used by UnoCSS's auto icon loader
+// (`ERR_IMPORT_ATTRIBUTE_MISSING`). Load collections via createRequire instead.
+const require = createRequire(import.meta.url)
 
 export default defineConfig({
   shortcuts: [
@@ -31,6 +36,12 @@ export default defineConfig({
     presetIcons({
       scale: 1.2,
       warn: true,
+      collections: {
+        'fa6-solid': () => require('@iconify-json/fa6-solid/icons.json'),
+        'fa6-regular': () => require('@iconify-json/fa6-regular/icons.json'),
+        'fa6-brands': () => require('@iconify-json/fa6-brands/icons.json'),
+        'mdi': () => require('@iconify-json/mdi/icons.json'),
+      },
     }),
     presetWebFonts({
       fonts: {
