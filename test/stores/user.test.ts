@@ -31,6 +31,16 @@ describe('user store', () => {
     expect(store.uuid).toBe(uuidv5('alice', UUID_NAMESPACE))
   })
 
+  it('trySignIn trims whitespace and rejects empty names', () => {
+    const store = useUserStore()
+    expect(store.trySignIn('')).toBe(false)
+    expect(store.trySignIn('   ')).toBe(false)
+    expect(store.isSignedIn).toBe(false)
+    expect(store.trySignIn('  alice  ')).toBe(true)
+    expect(store.name).toBe('alice')
+    expect(store.uuid).toBe(uuidv5('alice', UUID_NAMESPACE))
+  })
+
   it('signOut resets state', () => {
     const store = useUserStore()
     store.trySignIn('alice')

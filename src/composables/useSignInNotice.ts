@@ -3,11 +3,11 @@ import { onMounted, watch } from 'vue'
 import { useStore as useMessageStore } from '~/stores/message'
 import { useStore as useUserStore } from '~/stores/user'
 
-export const SIGN_IN_NOTICE = 'Please sign in if you want to save your name in the annotations.'
+export const SIGN_IN_NOTICE = 'Set a name if you want it recorded on new annotations.'
 
 /**
- * Show/Hide sign in notice
- * when the component is mounted and when sign in status updates.
+ * Show/hide the local-name notice when the component mounts and when
+ * signed-in status updates.
  */
 export const useSignInNotice = () => {
   const messageStore = useMessageStore()

@@ -5,19 +5,21 @@ import { useStore as useUserStore } from '~/stores/user'
 
 const dialog = ref(false)
 const userStore = useUserStore()
-const { isSignedIn, name } = storeToRefs(userStore)
-const { signOut } = userStore
-const messageStore = useMessageStore()
+const { isSignedIn, name: signedInName } = storeToRefs(userStore)
+const { signOut, trySignIn } = userStore
+const { addErrorMessage, addSuccessMessage } = useMessageStore()
+const name = ref('')
 
-const nameInputModel = ref('')
-const onClickSignIn = async () => {
-  userStore.trySignIn(nameInputModel.value)
-  if (isSignedIn.value === false) {
-    messageStore.addErrorMessage('Login Failed')
-    return
+const onSubmit = (): void => {
+  trySignIn(name.value)
+  if (isSignedIn.value) {
+    addSuccessMessage('Name saved')
+    dialog.value = false
+    name.value = ''
   }
-  messageStore.addSuccessMessage('Login Succeeded.')
-  dialog.value = false
+  else {
+    addErrorMessage('Name required')
+  }
 }
 </script>
 
@@ -26,23 +28,25 @@ const onClickSignIn = async () => {
     <template #activator>
       <button
         v-if="!isSignedIn"
+        type="button"
         icon-btn
-        class="mx-2 px-2 border-x"
+        class="mx-2 px-2 border-x border-gray-200"
         @click="dialog = !dialog"
       >
-        Sign in
+        Set name
       </button>
       <div
         v-else
-        class="mx-2 my-auto px-2 border-x"
+        class="mx-2 my-auto px-2 border-x border-gray-200"
       >
-        Hi, {{ name }}
+        Hi, {{ signedInName }}
         <button
+          type="button"
           icon-btn
           class="pl-2"
           @click="signOut"
         >
-          Sign out
+          Clear name
         </button>
       </div>
     </template>
@@ -53,9 +57,10 @@ const onClickSignIn = async () => {
       >
         <div class="flex">
           <div class="text-xl font-bold">
-            Sign in
+            Set name
           </div>
           <button
+            type="button"
             icon-btn
             class="ml-auto"
             title="Close"
@@ -64,33 +69,39 @@ const onClickSignIn = async () => {
             <div class="i-fa6-solid:xmark" />
           </button>
         </div>
-        <div class="p-4">
-          <div class="space-y-6">
-            <div>
-              <label
-                for="user"
-                class="mb-2 block"
-              >
-                Name
-              </label>
-              <input
-                id="user"
-                v-model="nameInputModel"
-                placeholder="Name"
-                required
-                class="text-sm p-2.5 rounded dark:placeholder-gray-400"
-                bg="gray-50 dark:gray-600"
-                border="~ gray-300 dark:gray-500"
-              >
-            </div>
-            <button
-              btn
-              @click="onClickSignIn"
+        <form
+          class="p-4 space-y-4"
+          @submit.prevent="onSubmit"
+        >
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            A local display name. New annotations store this name with your user id.
+          </p>
+          <div>
+            <label
+              for="user"
+              class="mb-2 block"
             >
-              Login
-            </button>
+              Name
+            </label>
+            <input
+              id="user"
+              v-model="name"
+              name="name"
+              placeholder="Name"
+              required
+              autocomplete="nickname"
+              class="text-sm p-2.5 rounded w-full dark:placeholder-gray-400"
+              bg="gray-50 dark:gray-600"
+              border="~ gray-300 dark:gray-500"
+            >
           </div>
-        </div>
+          <button
+            type="submit"
+            btn
+          >
+            Save
+          </button>
+        </form>
       </div>
     </template>
   </VDialog>

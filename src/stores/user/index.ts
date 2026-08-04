@@ -23,9 +23,11 @@ export const useStore = defineStore('user', {
   },
   actions: {
     trySignIn(name: string): boolean {
-      this.name = name
+      const trimmed = name.trim()
+      if (trimmed === '') return false
+      this.name = trimmed
       // Generate a uuid that is reproducible given the name.
-      this.uuid = uuidv5(name, UUID_NAMESPACE)
+      this.uuid = uuidv5(trimmed, UUID_NAMESPACE)
       return true
     },
     signOut(): void {
