@@ -1,7 +1,7 @@
 import type { IEditableShape } from './types'
 import Konva from 'konva'
 
-export interface IEditablePolygon extends IEditableShape {
+interface IEditablePolygon extends IEditableShape {
   /** Get/Set polygon contour points. */
   points: (() => [number, number][]) & ((value: [number, number][]) => this)
 

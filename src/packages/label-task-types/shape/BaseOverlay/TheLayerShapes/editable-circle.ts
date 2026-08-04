@@ -1,7 +1,7 @@
 import type { IEditableShape } from './types'
 import Konva from 'konva'
 
-export interface IEditableCircle extends IEditableShape {
+interface IEditableCircle extends IEditableShape {
   /** Get/Set circle center point. */
   point: (() => { x: number, y: number }) & ((value: { x: number, y: number }) => this)
 

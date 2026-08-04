@@ -16,7 +16,7 @@ const getBBox = (points: [number, number][]): BBox => {
   return { xMin, xMax, yMin, yMax }
 }
 
-export interface IEditableRect extends IEditableShape {
+interface IEditableRect extends IEditableShape {
   /** Get/Set rect contour points. */
   points: (() => [number, number][]) & ((value: [number, number][]) => this)
 
