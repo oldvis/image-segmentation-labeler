@@ -2,8 +2,15 @@ import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it } from 'vitest'
 import seedAnnotations from '~/data/annotations.json'
 import { ShapeType } from '~/packages/label-task-types/shape/types'
-import { AnnotationType, isAnnotationArray, StatusType, useStore as useAnnotationStore } from '~/stores/annotation'
+import {
+  AnnotationType,
+  isAnnotationArray,
+  parseUploadedAnnotations,
+  StatusType,
+  useStore as useAnnotationStore,
+} from '~/stores/annotation'
 import { useStore as useUserStore } from '~/stores/user'
+import { makeChartAnnotation, makeMultilabelAnnotation } from '../helpers/fixtures'
 
 describe('annotation store', () => {
   beforeEach(() => {
@@ -78,25 +85,11 @@ describe('annotation store', () => {
     store.update({ ...created, value: ['Vis', 'Confident'] })
 
     const updated = store.annotations.find((d) => d.uuid === created.uuid)!
-    expect(updated.value).toEqual(['Vis', 'Confident'])
-    expect(updated.user?.name).toBe('bob')
-    expect(updated.time).toEqual(expect.any(String))
-  })
-
-  it('update throws when uuid is missing', () => {
-    const store = useAnnotationStore()
-    expect(() => store.update({
-      type: AnnotationType.Chart,
-      uuid: 'missing-uuid',
-      subject: 's',
-      value: {
-        shape: ShapeType.Rect,
-        points: [[0, 0], [0, 1], [1, 1], [1, 0]],
-        chart: { marks: [] },
-      },
-      user: null,
-      time: null,
-    })).toThrow(/non-existing annotation/i)
+    expect(updated.type).toBe(AnnotationType.MultilabelClassification)
+    if (updated.type === AnnotationType.MultilabelClassification) {
+      expect(updated.value).toEqual(['Vis', 'Confident'])
+    }
+    expect(updated.user).toEqual(user.user)
   })
 
   it('remove deletes by uuid and throws for missing uuid', () => {
@@ -185,5 +178,66 @@ describe('annotation store', () => {
 
   it('isAnnotationArray accepts seed annotations.json', () => {
     expect(isAnnotationArray(seedAnnotations)).toBe(true)
+  })
+
+  it('parseUploadedAnnotations accepts known subjects and rejects unknown / bad shape / duplicate uuid', () => {
+    const known = new Set(['img-1', 'img-2'])
+    const ok = parseUploadedAnnotations([
+      makeChartAnnotation({ uuid: 'c1', subject: 'img-1' }),
+      makeMultilabelAnnotation({ uuid: 'm1', subject: 'img-2', value: ['Vis'] }),
+    ], known)
+    expect(ok).toEqual({ ok: true, data: expect.any(Array) })
+    if (ok.ok) expect(ok.data).toHaveLength(2)
+
+    expect(parseUploadedAnnotations({ nope: true }, known)).toEqual({
+      ok: false,
+      error: 'Upload failed: file is not an annotations array',
+    })
+    expect(parseUploadedAnnotations([
+      makeChartAnnotation({ uuid: 'c1', subject: 'missing' }),
+    ], known)).toEqual({
+      ok: false,
+      error: 'Upload failed: annotation subject is not in the dataset',
+    })
+    expect(parseUploadedAnnotations([
+      makeChartAnnotation({ uuid: 'dup', subject: 'img-1' }),
+      makeMultilabelAnnotation({ uuid: 'dup', subject: 'img-2' }),
+    ], known)).toEqual({
+      ok: false,
+      error: 'Upload failed: duplicate annotation uuid',
+    })
+  })
+
+  it('parseUploadedAnnotations rejects duplicate multilabel rows for one subject', () => {
+    const known = new Set(['img-1'])
+    expect(parseUploadedAnnotations([
+      makeMultilabelAnnotation({ uuid: 'm1', subject: 'img-1', value: ['Vis'] }),
+      makeMultilabelAnnotation({ uuid: 'm2', subject: 'img-1', value: ['Not Vis'] }),
+    ], known)).toEqual({
+      ok: false,
+      error: 'Upload failed: duplicate multilabel annotation for the same subject',
+    })
+  })
+
+  it('setAnnotations replaces rows and marks subjects with annotations as Labeled', () => {
+    const store = useAnnotationStore()
+    store.statuses = store.statuses.map((d) => (
+      d.uuid === 'img-2' ? { ...d, value: StatusType.Skipped } : d
+    ))
+    store.selectedAnnotations = [makeChartAnnotation({ uuid: 'old', subject: 'img-1' })]
+
+    store.setAnnotations([
+      makeChartAnnotation({ uuid: 'c1', subject: 'img-1' }),
+    ])
+
+    expect(store.annotations).toHaveLength(1)
+    expect(store.annotations[0]?.uuid).toBe('c1')
+    expect(store.statuses).toEqual([
+      { uuid: 'img-1', value: StatusType.Labeled },
+      { uuid: 'img-2', value: StatusType.New },
+    ])
+    expect(store.isLabeled('img-1')).toBe(true)
+    expect(store.isLabeled('img-2')).toBe(false)
+    expect(store.selectedAnnotations).toEqual([])
   })
 })

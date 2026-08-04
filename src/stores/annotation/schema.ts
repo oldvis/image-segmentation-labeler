@@ -91,3 +91,46 @@ const annotationsSchema: z.ZodType<Annotation[]> = z.array(annotationSchema)
 export const isAnnotationArray = (value: unknown): value is Annotation[] => (
   annotationsSchema.safeParse(value).success
 )
+
+/**
+ * Validate an uploaded annotations file against the loaded dataset.
+ *
+ * Enforces subject membership here (not in progress counters) so UI stats stay
+ * honest: orphan subjects would otherwise make Unlabeled/Labeled miscount.
+ * Also rejects duplicate uuids and duplicate MultilabelClassification rows for
+ * the same subject (the multilabel toolbar assumes at most one).
+ */
+export const parseUploadedAnnotations = (
+  value: unknown,
+  knownSubjects: ReadonlySet<string>,
+): { ok: true, data: Annotation[] } | { ok: false, error: string } => {
+  const parsed = annotationsSchema.safeParse(value)
+  if (!parsed.success) {
+    return { ok: false, error: 'Upload failed: file is not an annotations array' }
+  }
+
+  const seenUuids = new Set<string>()
+  const multilabelSubjects = new Set<string>()
+
+  for (const annotation of parsed.data) {
+    if (!knownSubjects.has(annotation.subject)) {
+      return { ok: false, error: 'Upload failed: annotation subject is not in the dataset' }
+    }
+    if (seenUuids.has(annotation.uuid)) {
+      return { ok: false, error: 'Upload failed: duplicate annotation uuid' }
+    }
+    seenUuids.add(annotation.uuid)
+
+    if (annotation.type === AnnotationType.MultilabelClassification) {
+      if (multilabelSubjects.has(annotation.subject)) {
+        return {
+          ok: false,
+          error: 'Upload failed: duplicate multilabel annotation for the same subject',
+        }
+      }
+      multilabelSubjects.add(annotation.subject)
+    }
+  }
+
+  return { ok: true, data: parsed.data }
+}

@@ -12,7 +12,7 @@ import { useStore as useUserStore } from '../user'
 import { categories } from './categories'
 import { StatusType } from './types'
 
-export { isAnnotationArray } from './schema'
+export { isAnnotationArray, parseUploadedAnnotations } from './schema'
 export * from './types'
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
@@ -115,6 +115,20 @@ export const useStore = defineStore('annotation', {
     removeBulk(uuids: string[]): void {
       const toRemove = new Set(uuids)
       this.annotations = this.annotations.filter((d) => !(toRemove.has(d.uuid)))
+    },
+    /**
+     * Cold path (load/upload): replace annotations and rebuild statuses.
+     * Subjects with ≥1 annotation → Labeled; others → New (clears Skipped/Viewed).
+     */
+    setAnnotations(next: Annotation[]): void {
+      this.annotations = next
+      const labeledSubjects = new Set(next.map((d) => d.subject))
+      this.statuses = this.dataObjects.map((d) => ({
+        uuid: d.uuid,
+        value: labeledSubjects.has(d.uuid) ? StatusType.Labeled : StatusType.New,
+      }))
+      const keep = new Set(next.map((d) => d.uuid))
+      this.selectedAnnotations = this.selectedAnnotations.filter((d) => keep.has(d.uuid))
     },
   },
   persist: true,

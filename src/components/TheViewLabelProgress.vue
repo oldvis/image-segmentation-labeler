@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { saveJsonFile, uploadJsonFile } from '~/plugins/file'
-import { isAnnotationArray, StatusType, useStore as useAnnotationStore } from '~/stores/annotation'
+import {
+  parseUploadedAnnotations,
+  StatusType,
+  useStore as useAnnotationStore,
+} from '~/stores/annotation'
 import { useStore as useMessageStore } from '~/stores/message'
 
 const annotationStore = useAnnotationStore()
-const { annotations, statuses } = storeToRefs(annotationStore)
+const { annotations, statuses, dataObjects } = storeToRefs(annotationStore)
 const { addErrorMessage, addSuccessMessage } = useMessageStore()
 
 const nUnlabeled = computed(() => (
@@ -32,11 +36,13 @@ const upload = async (): Promise<void> => {
   try {
     const data = await uploadJsonFile()
     if (data === null) return
-    if (!isAnnotationArray(data)) {
-      addErrorMessage('Upload failed: file is not an annotations array')
+    const knownSubjects = new Set(dataObjects.value.map((d) => d.uuid))
+    const parsed = parseUploadedAnnotations(data, knownSubjects)
+    if (!parsed.ok) {
+      addErrorMessage(parsed.error)
       return
     }
-    annotations.value = data
+    annotationStore.setAnnotations(parsed.data)
     addSuccessMessage('Annotations uploaded')
   }
   catch {
@@ -46,7 +52,7 @@ const upload = async (): Promise<void> => {
 </script>
 
 <template>
-  <div class="workspace-band px-2 py-1.5 flex flex-wrap gap-2 items-center">
+  <div class="px-2 py-1.5 workspace-band flex flex-wrap gap-2 items-center">
     <div class="text-sm flex gap-2 items-center">
       <div class="i-fa6-solid:list-check text-gray-500" />
       <div class="font-semibold">
