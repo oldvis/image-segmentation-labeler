@@ -43,7 +43,7 @@ test('capture annotate overview for README', async ({ page }) => {
   await page.getByTestId('chart-stage').waitFor({ state: 'visible', timeout: 30_000 })
   await page.locator('[data-testid="chart-stage"] canvas').first().waitFor({ state: 'visible' })
   await page.getByText('Hi, Reviewer').waitFor({ state: 'visible', timeout: 10_000 })
-  await page.getByText('Spans').waitFor({ state: 'visible' })
+  await page.getByText('Objects', { exact: true }).waitFor({ state: 'visible' })
 
   // Drop seed annotator identities so the public README shot has no real names.
   // Playwright serializes this callback — keep the body free of TS syntax.

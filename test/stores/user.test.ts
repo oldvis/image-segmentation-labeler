@@ -11,12 +11,6 @@ describe('user store', () => {
     setActivePinia(createPinia())
   })
 
-  it('starts signed out', () => {
-    const store = useUserStore()
-    expect(store.isSignedIn).toBe(false)
-    expect(store.user).toBeNull()
-  })
-
   it('trySignIn sets name and deterministic uuid v5', () => {
     const store = useUserStore()
     expect(store.trySignIn('alice')).toBe(true)

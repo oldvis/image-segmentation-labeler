@@ -16,7 +16,7 @@ describe('multilabel useAnnotations', () => {
     const { dataObject, multilabel, categories } = useAnnotations()
     expect(dataObject.value?.uuid).toBe('img-1')
     expect(multilabel.value?.uuid).toBe('m1')
-    expect(categories.value).toEqual(expect.arrayContaining(['Vis', 'Not Vis', 'Confident', 'Unconfident']))
+    expect(categories.value).toEqual(expect.arrayContaining(['Vis', 'Not Vis', 'Confident', 'Unsure']))
   })
 
   it('throws when more than one data object is selected', () => {

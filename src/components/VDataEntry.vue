@@ -19,24 +19,58 @@ const { datum } = toRefs(props)
 const { BaseDisplay } = dataTypeImage
 
 const filename = computed(() => datum.value.value.filename)
+const imageLoading = ref(false)
+const imageFailed = ref(false)
+
+/** BaseDisplay uses SVG <image>; track load via a parallel HTMLImageElement. */
+const resetImageState = (url: string | undefined): void => {
+  imageFailed.value = false
+  if (url === undefined || url === '') {
+    imageLoading.value = false
+    return
+  }
+  imageLoading.value = true
+  const img = new Image()
+  const finishOk = (): void => {
+    imageLoading.value = false
+  }
+  const finishErr = (): void => {
+    imageLoading.value = false
+    imageFailed.value = true
+  }
+  img.onload = finishOk
+  img.onerror = finishErr
+  img.src = url
+  if (img.complete) {
+    if (img.naturalWidth > 0) finishOk()
+    else finishErr()
+  }
+}
+
+watch(() => datum.value.value.url, resetImageState, { immediate: true })
 </script>
 
 <template>
   <div
-    class="text-sm p-2"
-    bg="slate-50 dark:slate-900"
-    border="~ gray-200"
-    flex="~ col"
+    class="text-sm p-2 flex grow flex-col min-h-0"
   >
-    <div class="flex">
-      <div v-if="index !== null" class="text-gray">
-        {{ index }}. &nbsp;
-      </div>
+    <div class="mb-1 flex shrink-0">
       <b>{{ filename }}</b>
     </div>
-    <div class="flex flex-1">
+    <div class="flex flex-1 min-h-0 relative">
+      <div
+        v-if="imageLoading && !imageFailed"
+        class="text-sm text-gray-500 flex gap-2 items-center inset-0 justify-center absolute z-1"
+      >
+        <div
+          class="i-fa6-solid:spinner"
+          animate-spin
+        />
+        Loading image
+      </div>
       <BaseDisplay
         class="flex-1"
+        :class="imageLoading ? 'opacity-0' : 'opacity-100'"
         :data-object="datum"
       >
         <template #overlay="overlayProps">

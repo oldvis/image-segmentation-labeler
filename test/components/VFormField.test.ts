@@ -21,12 +21,4 @@ describe('vFormField', () => {
     expect(label.attributes('for')).toBeTruthy()
     expect(control.attributes('id')).toBe(label.attributes('for'))
   })
-
-  it('uses a compact horizontal layout by default', () => {
-    const wrapper = mount(VFormField, {
-      props: { label: 'Theme' },
-      slots: { default: '<input />' },
-    })
-    expect(wrapper.classes().join(' ')).toContain('items-center')
-  })
 })

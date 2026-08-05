@@ -6,12 +6,14 @@ import type { AnnotationShape } from '~/packages/label-task-types/shape/types'
 import { scaleOrdinal, schemeCategory10 } from 'd3'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
-import annotations from '~/data/annotations.json'
+import annotationsSeed from '~/data/annotations.json'
 import rawDataObjects from '~/data/data-objects.json'
 import { useStore as useUserStore } from '../user'
-import { categories } from './categories'
-import { StatusType } from './types'
+import { categories, polarityCategoryColors } from './categories'
+import { AnnotationType, StatusType } from './types'
 
+export { categories } from './categories'
+export { categoryTip, categoryTips } from './categoryTips'
 export { isAnnotationArray, parseUploadedAnnotations } from './schema'
 export * from './types'
 
@@ -43,6 +45,26 @@ const withAnnotationMeta = <T extends AnnotationCreate>(
   time,
 })
 
+/**
+ * An entry is labeled when it has detection shapes (Chart/Shape) or at least
+ * one image-level tag (non-empty MultilabelClassification).
+ */
+const subjectHasLabels = (
+  annotations: readonly Annotation[],
+  subjectUuid: string,
+): boolean => (
+  annotations.some((annotation) => {
+    if (annotation.subject !== subjectUuid) return false
+    if (annotation.type === AnnotationType.MultilabelClassification) {
+      return annotation.value.length > 0
+    }
+    return (
+      annotation.type === AnnotationType.Chart
+      || annotation.type === AnnotationType.Shape
+    )
+  })
+)
+
 const dataObjects: ImageDataObject[] = rawDataObjects.map((d) => (
   {
     uuid: d.uuid,
@@ -54,12 +76,18 @@ const dataObjects: ImageDataObject[] = rawDataObjects.map((d) => (
     },
   }
 ))
-const statuses: Status[] = dataObjects.map((d) => ({ uuid: d.uuid, value: StatusType.New }))
+
+const annotations = annotationsSeed as Annotation[]
+
+const statuses: Status[] = dataObjects.map((d) => ({
+  uuid: d.uuid,
+  value: subjectHasLabels(annotations, d.uuid) ? StatusType.Labeled : StatusType.New,
+}))
 
 export const useStore = defineStore('annotation', {
   state: () => ({
     dataObjects,
-    annotations: annotations as Annotation[],
+    annotations,
     /** The label statuses of the data objects. */
     statuses,
     categories,
@@ -73,16 +101,32 @@ export const useStore = defineStore('annotation', {
       return Object.fromEntries(this.statuses.map((d) => [d.uuid, d.value]))
     },
     categoryToColor(): ((category: string) => string) {
-      const { categories } = this
-      const scale = scaleOrdinal(schemeCategory10).domain(categories.map((d) => d.value))
-      return (category: string): string => scale(category)
+      const markDomain = this.categories
+        .map((d) => d.value)
+        .filter((value) => !(value in polarityCategoryColors))
+      const scale = scaleOrdinal(schemeCategory10).domain(markDomain)
+      return (category: string): string => (
+        polarityCategoryColors[category] ?? scale(category)
+      )
     },
   },
   actions: {
-    /** Check if a data entry is labeled */
+    /**
+     * True when the entry has shape/chart annotations or image-level tags.
+     * Skipped is tracked separately via `statuses`.
+     */
     isLabeled(uuid: string): boolean {
-      const { uuidToStatus } = this
-      return (uuid in uuidToStatus) && (uuidToStatus[uuid] === StatusType.Labeled)
+      return subjectHasLabels(this.annotations, uuid)
+    },
+    /** Keep status in sync after annotation edits (preserves Skipped). */
+    syncSubjectStatus(uuid: string): void {
+      const index = this.statuses.findIndex((d) => d.uuid === uuid)
+      if (index < 0) return
+      if (this.statuses[index]!.value === StatusType.Skipped) return
+      this.statuses[index] = {
+        uuid,
+        value: this.isLabeled(uuid) ? StatusType.Labeled : StatusType.Viewed,
+      }
     },
     add(partial: AnnotationCreate): void {
       const userStore = useUserStore()
@@ -92,46 +136,56 @@ export const useStore = defineStore('annotation', {
         userStore.user,
         new Date().toISOString(),
       ))
+      this.syncSubjectStatus(partial.subject)
     },
     /** Update an annotation. */
     update(updated: Annotation): void {
       const index = this.annotations.findIndex((d) => (d.uuid === updated.uuid))
       if (index < 0) throw new Error(`Update non-existing annotation with uuid: ${updated.uuid}`)
       const userStore = useUserStore()
+      const previousSubject = this.annotations[index]!.subject
       this.annotations[index] = withAnnotationMeta(
         updated,
         updated.uuid,
         userStore.user,
         new Date().toISOString(),
       )
+      this.syncSubjectStatus(previousSubject)
+      if (updated.subject !== previousSubject) {
+        this.syncSubjectStatus(updated.subject)
+      }
     },
     /** Remove an annotation. */
     remove(uuid: string): void {
       const index = this.annotations.findIndex((d) => (d.uuid === uuid))
       if (index < 0) throw new Error(`Remove non-existing annotation with uuid: ${uuid}`)
+      const subject = this.annotations[index]!.subject
       this.annotations.splice(index, 1)
+      this.syncSubjectStatus(subject)
     },
     /** Remove multiple annotations. */
     removeBulk(uuids: string[]): void {
       const toRemove = new Set(uuids)
+      const subjects = new Set(
+        this.annotations.filter((d) => toRemove.has(d.uuid)).map((d) => d.subject),
+      )
       this.annotations = this.annotations.filter((d) => !(toRemove.has(d.uuid)))
+      subjects.forEach((subject) => this.syncSubjectStatus(subject))
     },
     /**
      * Cold path (load/upload): replace annotations and rebuild statuses.
-     * Subjects with ≥1 annotation → Labeled; others → New (clears Skipped/Viewed).
+     * Subjects with detection or tag labels → Labeled; others → New (clears Skipped/Viewed).
      */
     setAnnotations(next: Annotation[]): void {
       this.annotations = next
-      const labeledSubjects = new Set(next.map((d) => d.subject))
       this.statuses = this.dataObjects.map((d) => ({
         uuid: d.uuid,
-        value: labeledSubjects.has(d.uuid) ? StatusType.Labeled : StatusType.New,
+        value: subjectHasLabels(next, d.uuid) ? StatusType.Labeled : StatusType.New,
       }))
       const keep = new Set(next.map((d) => d.uuid))
       this.selectedAnnotations = this.selectedAnnotations.filter((d) => keep.has(d.uuid))
     },
   },
-  persist: true,
 })
 
 if (import.meta.hot) {

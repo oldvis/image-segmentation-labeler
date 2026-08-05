@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { buildKonvaShape, findKonvaShapes } from '~/packages/label-task-types/shape/BaseOverlay/TheLayerShapes/build-shapes'
+import { buildKonvaShape } from '~/packages/label-task-types/shape/BaseOverlay/TheLayerShapes/build-shapes'
 import { ShapeType } from '~/packages/label-task-types/shape/types'
 import { AnnotationType } from '~/stores/annotation'
 
@@ -40,16 +40,5 @@ describe('buildKonvaShape', () => {
       expect(node.getAttr('uuid')).toBe('shape-1')
       expect(node.getAttr('object')).toBeTruthy()
     }
-  })
-})
-
-describe('findKonvaShapes', () => {
-  it('queries the editable-shape name selector on the layer', () => {
-    const found = [{ name: () => 'editable-shape' }]
-    const layer = {
-      find: vi.fn((selector: string) => (selector === '.editable-shape' ? found : [])),
-    }
-    expect(findKonvaShapes(layer as never)).toEqual(found)
-    expect(layer.find).toHaveBeenCalledWith('.editable-shape')
   })
 })

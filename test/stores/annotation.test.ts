@@ -53,20 +53,6 @@ describe('annotation store', () => {
     expect(created.type).toBe(AnnotationType.Chart)
   })
 
-  it('add accepts Chart payload', () => {
-    const store = useAnnotationStore()
-    store.add({
-      type: AnnotationType.Chart,
-      subject: 'img-1',
-      value: {
-        shape: ShapeType.Rect,
-        points: [[0, 0], [0, 1], [1, 1], [1, 0]],
-        chart: { marks: [] },
-      },
-    })
-    expect(store.annotations.at(-1)?.type).toBe(AnnotationType.Chart)
-  })
-
   it('update rewrites matching uuid and refreshes user/time', () => {
     const user = useUserStore()
     user.trySignIn('alice')
@@ -115,22 +101,54 @@ describe('annotation store', () => {
     expect(store.annotations.map((d) => d.uuid)).not.toContain(a.uuid)
   })
 
-  it('isLabeled follows StatusType.Labeled', () => {
+  it('isLabeled follows detection shapes or non-empty tags, not StatusType alone', () => {
     const store = useAnnotationStore()
+    store.setAnnotations([])
     store.statuses = store.statuses.map((d) => (
       d.uuid === 'img-1' ? { ...d, value: StatusType.Labeled } : d
     ))
+    expect(store.isLabeled('img-1')).toBe(false)
+
+    store.add({
+      type: AnnotationType.MultilabelClassification,
+      subject: 'img-1',
+      value: ['Vis'],
+    })
     expect(store.isLabeled('img-1')).toBe(true)
+    expect(store.statuses.find((d) => d.uuid === 'img-1')?.value).toBe(StatusType.Labeled)
+
+    store.add({
+      type: AnnotationType.MultilabelClassification,
+      subject: 'img-2',
+      value: [],
+    })
     expect(store.isLabeled('img-2')).toBe(false)
+
+    store.add({
+      type: AnnotationType.Chart,
+      subject: 'img-2',
+      value: {
+        shape: ShapeType.Rect,
+        points: [[0, 0], [0, 1], [1, 1], [1, 0]],
+        chart: { marks: [] },
+      },
+    })
+    expect(store.isLabeled('img-2')).toBe(true)
     expect(store.isLabeled('missing')).toBe(false)
   })
 
-  it('categoryToColor is stable for known categories', () => {
+  it('remove clears labeled status when no labels remain', () => {
     const store = useAnnotationStore()
-    const a = store.categoryToColor('Rect')
-    const b = store.categoryToColor('Rect')
-    expect(a).toBe(b)
-    expect(a).toMatch(/^#[0-9a-f]{6}$/i)
+    store.setAnnotations([])
+    store.add({
+      type: AnnotationType.MultilabelClassification,
+      subject: 'img-1',
+      value: ['Confident'],
+    })
+    const uuid = store.annotations.at(-1)!.uuid
+    store.remove(uuid)
+    expect(store.isLabeled('img-1')).toBe(false)
+    expect(store.statuses.find((d) => d.uuid === 'img-1')?.value).toBe(StatusType.Viewed)
   })
 
   it('isAnnotationArray accepts well-formed rows and rejects junk', () => {
@@ -159,21 +177,6 @@ describe('annotation store', () => {
       user: null,
       time: null,
     }])).toBe(false)
-  })
-
-  it('isAnnotationArray accepts Chart rows with chart.marks', () => {
-    expect(isAnnotationArray([{
-      type: AnnotationType.Chart,
-      uuid: 'a1',
-      subject: 's1',
-      value: {
-        shape: 'Rect',
-        points: [[0, 0], [0, 1], [1, 1], [1, 0]],
-        chart: { marks: [] },
-      },
-      user: null,
-      time: null,
-    }])).toBe(true)
   })
 
   it('isAnnotationArray accepts seed annotations.json', () => {

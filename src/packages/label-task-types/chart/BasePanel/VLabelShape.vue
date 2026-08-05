@@ -39,6 +39,30 @@ const sections = ref({
   marks: false,
 })
 
+/** Mark type(s) drive color + primary title when present; shape is geometry only. */
+const markTypes = computed(() => (
+  [...new Set(props.annotation.value.chart.marks.map((d) => d.type))]
+))
+
+/** Show this many mark classes before collapsing the rest to +N. */
+const MAX_HEADER_MARK_TYPES = 3
+
+const headerMarkTypesShown = computed(() => (
+  markTypes.value.slice(0, MAX_HEADER_MARK_TYPES)
+))
+
+const headerMarkOverflow = computed(() => (
+  Math.max(0, markTypes.value.length - MAX_HEADER_MARK_TYPES)
+))
+
+const headerTitleHint = computed(() => (
+  markTypes.value.length === 0
+    ? `Shape ${props.annotation.value.shape} (no mark class yet)`
+    : `Mark class ${markTypes.value.join(', ')} · shape ${props.annotation.value.shape}`
+))
+
+const shapeMetaPrefix = computed(() => `Shape ${props.annotation.value.shape}`)
+
 const updateTitle = (e: Event): void => {
   const { annotation } = props
   const newValue: AnnotationChart = JSON.parse(JSON.stringify(annotation))
@@ -111,22 +135,53 @@ const removeMark = (i: number): void => {
 <template>
   <div
     data-testid="span-card"
-    class="p-2 border rounded gap-2"
+    class="p-2 border rounded gap-1"
     flex="~ col"
     :class="{ selected: isSelected }"
     @click="$emit('select', annotation)"
   >
-    <div class="flex gap-2 items-center">
-      <div fixed-value-container>
-        Chart
-      </div>
-      <div class="text-sm flex gap-1 items-center">
-        <div class="text-gray-500">
-          Shape
-        </div>
-        <div fixed-value-container>
-          {{ annotation.value.shape }}
-        </div>
+    <div class="flex gap-1.5 min-h-6 items-center">
+      <div
+        class="text-sm font-semibold flex flex-wrap gap-x-1.5 gap-y-0.5 min-w-0 items-center"
+        :title="headerTitleHint"
+      >
+        <template v-if="markTypes.length === 0">
+          <span
+            class="rounded-sm shrink-0 h-2.5 w-2.5"
+            :style="{ backgroundColor: categoryToColor(annotation.value.shape) }"
+            aria-hidden="true"
+          />
+          <span class="truncate">{{ annotation.value.shape }}</span>
+        </template>
+        <template v-else>
+          <template
+            v-for="(markType, i) in headerMarkTypesShown"
+            :key="markType"
+          >
+            <span
+              v-if="i > 0"
+              class="text-gray-300 font-normal select-none dark:text-gray-600"
+              aria-hidden="true"
+            >·</span>
+            <span class="flex gap-1 min-w-0 items-center">
+              <span
+                class="rounded-sm shrink-0 h-2.5 w-2.5"
+                :style="{ backgroundColor: categoryToColor(markType) }"
+                aria-hidden="true"
+              />
+              <span class="truncate">{{ markType }}</span>
+            </span>
+          </template>
+          <template v-if="headerMarkOverflow > 0">
+            <span
+              class="text-gray-300 font-normal select-none dark:text-gray-600"
+              aria-hidden="true"
+            >·</span>
+            <span class="text-gray-500 font-medium dark:text-gray-400">
+              +{{ headerMarkOverflow }}
+            </span>
+          </template>
+        </template>
       </div>
       <div class="grow" />
       <button
@@ -140,129 +195,127 @@ const removeMark = (i: number): void => {
       </button>
     </div>
 
-    <VLabelShapePosition
-      :points="annotation.value.points"
-      :shape="annotation.value.shape"
-    />
+    <div class="text-sm text-gray-500 dark:text-gray-400">
+      <span>{{ shapeMetaPrefix }}</span>
+      <span aria-hidden="true"> · </span>
+      <VLabelShapePosition
+        class="inline"
+        :points="annotation.value.points"
+        :shape="annotation.value.shape"
+      />
+    </div>
 
     <div
       v-if="annotation.user !== null"
-      class="text-sm mx-0 flex flex-wrap gap-2 items-center"
+      class="text-sm text-gray-500 dark:text-gray-400"
     >
-      <div class="text-gray-500">
-        Last modified by
-      </div>
-      <div fixed-value-container>
-        {{ annotation.user.name }}
-      </div>
+      Last modified by {{ annotation.user.name }}
     </div>
 
-    <div border="t gray-200" />
-
-    <VCollapseSection
-      title="Details"
-      :open="sections.details"
-      @update:open="sections.details = $event"
-    >
-      <div class="flex flex-col gap-2">
+    <div class="pt-0.5 border-t border-gray-200 flex flex-col dark:border-gray-700">
+      <VCollapseSection
+        title="Details"
+        :open="sections.details"
+        @update:open="sections.details = $event"
+      >
         <VFormField
           v-slot="{ id }"
           label="Title"
+          label-class="w-16"
         >
           <input
             :id="id"
             :value="annotation.value.chart.title"
-
-            class="w-full"
+            class="w-40"
             placeholder="chart title"
-            required input-area
+            required
+            input-area
             @input="updateTitle"
           >
         </VFormField>
         <VFormField
           v-slot="{ id }"
           label="Theme"
+          label-class="w-16"
         >
           <input
             :id="id"
             :value="annotation.value.chart.theme"
-
-            class="w-full"
+            class="w-40"
             placeholder="content theme"
-            required input-area
+            required
+            input-area
             @input="updateTheme"
           >
         </VFormField>
         <VFormField
           v-slot="{ id }"
           label="Language"
+          label-class="w-16"
         >
           <input
             :id="id"
             :value="annotation.value.chart.language"
-
-            class="w-full"
+            class="w-40"
             placeholder="language used"
-            required input-area
+            required
+            input-area
             @input="updateLanguage"
           >
         </VFormField>
-      </div>
-    </VCollapseSection>
+      </VCollapseSection>
 
-    <div border="t gray-200" />
-
-    <VCollapseSection
-      title="Repeat"
-      :open="sections.repeat"
-      @update:open="sections.repeat = $event"
-    >
-      <VLabelShapeRepeat
-        :repeat="annotation.value.chart.repeat"
-        @update:repeat="updateRepeat"
-      />
-    </VCollapseSection>
-
-    <div border="t gray-200" />
-
-    <VCollapseSection
-      title="Marks"
-      :open="sections.marks"
-      @update:open="sections.marks = $event"
-    >
-      <template #actions>
-        <button
-          type="button"
-          icon-btn
-          title="Add mark"
-          aria-label="Add mark"
-          @click.stop="addMark"
-        >
-          <div class="i-fa6-solid:plus m-auto" />
-        </button>
-      </template>
-      <div
-        v-if="annotation.value.chart.marks.length !== 0"
-        class="gap-2"
-        flex="~ col"
+      <VCollapseSection
+        title="Repeat"
+        :open="sections.repeat"
+        @update:open="sections.repeat = $event"
       >
-        <VLabelShapeMark
-          v-for="(mark, i) in annotation.value.chart.marks"
-          :key="i"
-          :mark="mark"
-          :categories="categories"
-          @update:mark-schema="updateMarkSchema(i, $event)"
-          @update:mark-type="updateMarkType(i, $event)"
-          @update:mark-encode="updateMarkEncode(i, $event)"
-          @remove="removeMark(i)"
+        <VLabelShapeRepeat
+          :repeat="annotation.value.chart.repeat"
+          @update:repeat="updateRepeat"
         />
-      </div>
-      <div
-        v-else
-        class="text-sm text-gray-500"
+      </VCollapseSection>
+
+      <VCollapseSection
+        title="Marks"
+        :open="sections.marks"
+        @update:open="sections.marks = $event"
       >
-        No marks yet. Use + to add one.
-      </div>
-    </VCollapseSection>
+        <template #actions>
+          <button
+            type="button"
+            tool-btn
+            class="!min-w-6"
+            title="Add mark"
+            aria-label="Add mark"
+            @click.stop="addMark"
+          >
+            <div class="i-fa6-solid:plus text-xs" />
+          </button>
+        </template>
+        <div
+          v-if="annotation.value.chart.marks.length !== 0"
+          class="flex flex-col gap-1.5"
+        >
+          <VLabelShapeMark
+            v-for="(mark, i) in annotation.value.chart.marks"
+            :key="i"
+            :index="i + 1"
+            :mark="mark"
+            :categories="categories"
+            @update:mark-schema="updateMarkSchema(i, $event)"
+            @update:mark-type="updateMarkType(i, $event)"
+            @update:mark-encode="updateMarkEncode(i, $event)"
+            @remove="removeMark(i)"
+          />
+        </div>
+        <div
+          v-else
+          class="text-sm text-gray-500"
+        >
+          No marks yet. Use + to add one.
+        </div>
+      </VCollapseSection>
+    </div>
   </div>
 </template>

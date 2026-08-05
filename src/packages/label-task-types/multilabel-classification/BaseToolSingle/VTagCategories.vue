@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { categoryTip } from '~/stores/annotation/categoryTips'
+
 const props = defineProps<{
   value: string[]
   categories: string[]
@@ -29,10 +31,11 @@ const isSelected = (category: string): boolean => {
       :key="d"
       type="button"
       :data-testid="`tag-${d}`"
-      class="text-sm tool-btn px-2 border rounded flex gap-1 items-center"
-      :class="isSelected(d) ? 'tool-btn-active' : ''"
+      class="flex gap-1 items-center"
+      :class="isSelected(d) ? 'pill-on' : 'pill'"
+      :title="categoryTip(d)"
       :aria-pressed="isSelected(d) ? 'true' : 'false'"
-      :aria-label="d"
+      :aria-label="categoryTip(d)"
       @click="toggleCategory(d)"
     >
       <div

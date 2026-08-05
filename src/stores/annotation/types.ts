@@ -32,9 +32,9 @@ export enum Category {
   // Vis/Non-Vis
   Vis = 'Vis',
   NotVis = 'Not Vis',
-  // Confident/Unconfident
+  // Confident/Unsure
+  Unsure = 'Unsure',
   Confident = 'Confident',
-  Unconfident = 'Unconfident',
   // Mark type categories.
   /** Stroked lines, often used for showing change over time. */
   Line = 'Line',

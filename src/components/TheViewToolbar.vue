@@ -4,28 +4,36 @@ import { BaseToolSingle as BaseToolSingleMultilabel } from '~/packages/label-tas
 </script>
 
 <template>
+  <!--
+    Two peer groups (same weight as Classify “Selectors”):
+    Draw = mark category + shape tools; Tags = image-level labels.
+  -->
   <div
-    class="workspace-band flex flex-wrap items-stretch"
-    workspace-gap
+    status-strip
+    border="b gray-200 dark:gray-700"
   >
-    <div toolbar-group>
-      <div class="i-fa6-solid:toolbox text-gray-500" />
-      <div toolbar-label>
-        Tools
-      </div>
-    </div>
-    <div class="my-1 border-l border-gray-200 dark:border-gray-700" />
-    <div toolbar-group class="min-w-0">
-      <div toolbar-label>
+    <div class="flex shrink-0 gap-1.5 items-center">
+      <div class="i-fa6-solid:pen text-gray-500 my-auto" />
+      <div strip-label>
         Draw
       </div>
+    </div>
+    <div class="flex flex-wrap gap-1 min-w-0 items-center">
       <BaseToolSingleChart />
     </div>
-    <div class="my-1 border-l border-gray-200 dark:border-gray-700" />
-    <div toolbar-group class="min-w-0">
-      <div toolbar-label>
+
+    <span
+      class="text-gray-300 shrink-0 select-none dark:text-gray-600"
+      aria-hidden="true"
+    >|</span>
+
+    <div class="flex shrink-0 gap-1.5 items-center">
+      <div class="i-fa6-solid:tags text-gray-500 my-auto" />
+      <div strip-label>
         Tags
       </div>
+    </div>
+    <div class="flex flex-wrap gap-1 min-w-0 items-center">
       <BaseToolSingleMultilabel />
     </div>
   </div>

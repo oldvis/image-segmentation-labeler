@@ -29,35 +29,51 @@ const onSubmit = (): void => {
       <button
         v-if="!isSignedIn"
         type="button"
-        icon-btn
-        class="mx-2 px-2 border-x border-gray-200"
+        btn-secondary
+        class="flex gap-1 items-center"
+        title="Set a local annotator name for new labels"
         @click="dialog = !dialog"
       >
-        Set name
+        <div class="i-fa6-regular:user my-auto" />
+        <span>Set annotator name</span>
       </button>
       <div
         v-else
-        class="mx-2 my-auto px-2 border-x border-gray-200"
+        class="flex gap-1 items-center"
       >
-        Hi, {{ signedInName }}
         <button
           type="button"
-          icon-btn
-          class="pl-2"
+          btn-secondary
+          class="flex gap-1 items-center"
+          title="Change annotator name"
+          @click="dialog = !dialog"
+        >
+          <div class="i-fa6-regular:user my-auto" />
+          <span>Hi, {{ signedInName }}</span>
+        </button>
+        <button
+          type="button"
+          btn-ghost
+          title="Clear annotator name"
           @click="signOut"
         >
-          Clear name
+          Clear
         </button>
       </div>
     </template>
     <template #default>
-      <div
-        class="p-4 rounded max-w-md shadow"
-        bg="white dark:gray-700"
+      <form
+        dialog-panel
+        role="dialog"
+        aria-labelledby="annotator-name-title"
+        @submit.prevent="onSubmit"
       >
-        <div class="flex">
-          <div class="text-xl font-bold">
-            Set name
+        <div class="status-strip border-b border-gray-200 dark:border-gray-700">
+          <div
+            id="annotator-name-title"
+            strip-label
+          >
+            Annotator name
           </div>
           <button
             type="button"
@@ -69,40 +85,46 @@ const onSubmit = (): void => {
             <div class="i-fa6-solid:xmark" />
           </button>
         </div>
-        <form
-          class="p-4 space-y-4"
-          @submit.prevent="onSubmit"
-        >
-          <p class="text-sm text-gray-600 dark:text-gray-300">
-            A local display name. New annotations store this name with your user id.
+
+        <div dialog-body>
+          <label
+            for="user"
+            class="text-sm font-semibold"
+          >
+            Name
+          </label>
+          <input
+            id="user"
+            v-model="name"
+            name="name"
+            placeholder="e.g. Alex"
+            required
+            autocomplete="nickname"
+            dialog-field
+          >
+          <p class="strip-meta m-0">
+            Shown locally only. Saved annotations use a generated id.
           </p>
-          <div>
-            <label
-              for="user"
-              class="mb-2 block"
-            >
-              Name
-            </label>
-            <input
-              id="user"
-              v-model="name"
-              name="name"
-              placeholder="Name"
-              required
-              autocomplete="nickname"
-              class="text-sm p-2.5 rounded w-full dark:placeholder-gray-400"
-              bg="gray-50 dark:gray-600"
-              border="~ gray-300 dark:gray-500"
-            >
-          </div>
+        </div>
+
+        <div class="status-strip border-t border-gray-200 gap-1.5 justify-end dark:border-gray-700">
+          <button
+            type="button"
+            btn-secondary
+            title="Cancel without saving"
+            @click="dialog = false"
+          >
+            Cancel
+          </button>
           <button
             type="submit"
             btn
+            title="Save annotator name"
           >
             Save
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </template>
   </VDialog>
 </template>

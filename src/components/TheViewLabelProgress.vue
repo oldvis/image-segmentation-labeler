@@ -2,6 +2,8 @@
 import { storeToRefs } from 'pinia'
 import { saveJsonFile, uploadJsonFile } from '~/plugins/file'
 import {
+  AnnotationType,
+  Category,
   parseUploadedAnnotations,
   StatusType,
   useStore as useAnnotationStore,
@@ -12,21 +14,29 @@ const annotationStore = useAnnotationStore()
 const { annotations, statuses, dataObjects } = storeToRefs(annotationStore)
 const { addErrorMessage, addSuccessMessage } = useMessageStore()
 
-const nUnlabeled = computed(() => (
-  statuses.value.filter((d) => [StatusType.New, StatusType.Viewed].includes(d.value)).length
+/** Labeled = has shape/chart detections or non-empty image tags. */
+const nLabeled = computed(() => (
+  dataObjects.value.filter((d) => annotationStore.isLabeled(d.uuid)).length
 ))
 const nSkipped = computed(() => (
-  statuses.value.filter((d) => d.value === StatusType.Skipped).length
+  statuses.value.filter((d) => (
+    d.value === StatusType.Skipped && !annotationStore.isLabeled(d.uuid)
+  )).length
 ))
-const nLabeled = computed(() => (
-  statuses.value.filter((d) => d.value === StatusType.Labeled).length
+const nUnlabeled = computed(() => (
+  Math.max(0, dataObjects.value.length - nLabeled.value - nSkipped.value)
 ))
 
-const stats = computed(() => ([
-  { title: 'Unlabeled', value: nUnlabeled.value },
-  { title: 'Labeled', value: nLabeled.value },
-  { title: 'Skipped', value: nSkipped.value },
-]))
+/** Entries whose image tags include the given multilabel value. */
+const countTagged = (tag: Category): number => (
+  annotations.value.reduce((n, annotation) => {
+    if (annotation.type !== AnnotationType.MultilabelClassification) return n
+    return annotation.value.includes(tag) ? n + 1 : n
+  }, 0)
+)
+
+const nUnsure = computed(() => countTagged(Category.Unsure))
+const nConfident = computed(() => countTagged(Category.Confident))
 
 const save = (): void => {
   saveJsonFile(annotations.value, 'annotation.json')
@@ -52,46 +62,81 @@ const upload = async (): Promise<void> => {
 </script>
 
 <template>
-  <div class="px-2 py-1.5 workspace-band flex flex-wrap gap-2 items-center">
-    <div class="text-sm flex gap-2 items-center">
-      <div class="i-fa6-solid:list-check text-gray-500" />
-      <div class="font-semibold">
+  <div status-strip>
+    <div class="flex shrink-0 gap-1.5 items-center">
+      <div class="i-fa6-solid:list-check text-gray-500 my-auto" />
+      <div strip-label>
         Progress
       </div>
     </div>
-    <div class="grow" />
-    <div class="text-sm flex flex-wrap gap-3 items-center">
-      <div
-        v-for="d in stats"
-        :key="d.title"
-        class="flex gap-1 items-center"
-      >
-        <span class="text-gray-500">{{ d.title }}</span>
+    <div class="strip-meta flex grow flex-wrap gap-x-1.5 gap-y-1 min-w-0 items-center">
+      <span>
+        Labeled
         <span
-          class="font-semibold tabular-nums"
-          :data-testid="d.title === 'Labeled' ? 'progress-labeled-count' : undefined"
-        >
-          {{ d.value }}
-        </span>
-      </div>
-      <div class="flex gap-2">
-        <button
-          type="button"
-          btn-secondary
-          data-testid="annotations-download"
-          @click="save"
-        >
-          Download
-        </button>
-        <button
-          type="button"
-          btn-secondary
-          data-testid="annotations-upload"
-          @click="upload"
-        >
-          Upload
-        </button>
-      </div>
+          strip-meta-em
+          data-testid="progress-labeled-count"
+        >{{ nLabeled }}</span>
+        /
+        <span strip-meta-em>{{ dataObjects.length }}</span>
+      </span>
+      <span
+        strip-sep
+        aria-hidden="true"
+      >·</span>
+      <span>
+        Unlabeled
+        <span strip-meta-em>{{ nUnlabeled }}</span>
+      </span>
+      <span
+        strip-sep
+        aria-hidden="true"
+      >·</span>
+      <span>
+        Skipped
+        <span strip-meta-em>{{ nSkipped }}</span>
+      </span>
+      <span
+        strip-sep
+        aria-hidden="true"
+      >|</span>
+      <span>
+        Unsure
+        <span
+          strip-meta-em
+          data-testid="progress-unsure-count"
+        >{{ nUnsure }}</span>
+      </span>
+      <span
+        strip-sep
+        aria-hidden="true"
+      >·</span>
+      <span>
+        Confident
+        <span
+          strip-meta-em
+          data-testid="progress-confident-count"
+        >{{ nConfident }}</span>
+      </span>
+    </div>
+    <div class="ml-auto flex shrink-0 gap-1">
+      <button
+        type="button"
+        btn-secondary
+        data-testid="annotations-download"
+        title="Download annotation.json (not saved in the browser)"
+        @click="save"
+      >
+        Download
+      </button>
+      <button
+        type="button"
+        btn-secondary
+        data-testid="annotations-upload"
+        title="Upload annotation.json (replaces current annotations)"
+        @click="upload"
+      >
+        Upload
+      </button>
     </div>
   </div>
 </template>

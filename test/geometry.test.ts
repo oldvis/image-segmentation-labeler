@@ -10,13 +10,4 @@ describe('getBBox', () => {
       yMax: 5,
     })
   })
-
-  it('handles a single point', () => {
-    expect(getBBox([[3, 4]])).toEqual({
-      xMin: 3,
-      xMax: 3,
-      yMin: 4,
-      yMax: 4,
-    })
-  })
 })

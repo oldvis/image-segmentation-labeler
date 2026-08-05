@@ -45,7 +45,7 @@ const updateRepeatColumn = (column: number): void => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col gap-1">
     <VFormField
       v-slot="{ id }"
       label="Axes"
@@ -70,7 +70,8 @@ const updateRepeatColumn = (column: number): void => {
         class="w-16"
         type="number"
         min="1"
-        required input-area
+        required
+        input-area
         @input="updateRepeatRow(+($event.target as HTMLInputElement).value)"
       >
     </VFormField>
@@ -86,7 +87,8 @@ const updateRepeatColumn = (column: number): void => {
         class="w-16"
         type="number"
         min="1"
-        required input-area
+        required
+        input-area
         @input="updateRepeatColumn(+($event.target as HTMLInputElement).value)"
       >
     </VFormField>

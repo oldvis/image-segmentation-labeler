@@ -15,6 +15,11 @@ const props = defineProps({
     type: Array as PropType<string[]>,
     required: true,
   },
+  /** 1-based index shown in the mark group header. */
+  index: {
+    type: Number,
+    required: true,
+  },
 })
 
 const emit = defineEmits<{
@@ -64,35 +69,41 @@ const updateChannelField = (channel: string, field: string): void => {
 </script>
 
 <template>
-  <div class="p-2 border rounded bg-gray-50/60 flex flex-col gap-2 dark:bg-gray-800/40">
-    <div class="flex gap-2 items-center">
-      <VFormField
-        v-slot="{ id }"
-        label="Schema"
-        label-class="w-16"
-      >
-        <VMenu
-          :id="id"
-          :value="mark.schema"
-          :options="schemaTypes"
-          @update:value="$emit('update:markSchema', $event)"
-        />
-      </VFormField>
+  <div class="p-1.5 border border-gray-200 rounded flex flex-col gap-1 dark:border-gray-700">
+    <div class="flex gap-1 min-h-6 items-center">
+      <span class="text-sm font-medium shrink-0">
+        Mark {{ index }}
+      </span>
+      <span class="text-sm text-gray-500 truncate dark:text-gray-400">
+        {{ mark.type }}
+      </span>
       <div class="grow" />
       <button
         type="button"
         title="Remove mark"
         aria-label="Remove mark"
-        class="icon-btn"
+        class="icon-btn shrink-0"
         @click.stop="$emit('remove')"
       >
-        <div class="i-fa6-solid:trash" />
+        <div class="i-fa6-solid:trash text-xs" />
       </button>
     </div>
     <VFormField
       v-slot="{ id }"
+      label="Schema"
+      label-class="w-16"
+    >
+      <VMenu
+        :id="id"
+        :value="mark.schema"
+        :options="schemaTypes"
+        @update:value="$emit('update:markSchema', $event)"
+      />
+    </VFormField>
+    <VFormField
+      v-slot="{ id }"
       label="Mark type"
-      label-class="w-20"
+      label-class="w-16"
     >
       <VMenu
         :id="id"
@@ -106,68 +117,54 @@ const updateChannelField = (channel: string, field: string): void => {
       :open="encodeOpen"
       @update:open="encodeOpen = $event"
     >
-      <div class="flex flex-col gap-2">
+      <VFormField
+        v-slot="{ id }"
+        label="Channels"
+        label-class="w-16"
+      >
+        <VMenuMultiSelect
+          :id="id"
+          :value="Object.keys(mark.encode)"
+          :options="encodeChannels"
+          @update:value="updateChannel"
+        />
+      </VFormField>
+      <div
+        v-for="([key, d], i) in Object.entries(mark.encode)"
+        :key="key"
+        class="pl-1 border-l-2 border-gray-200 flex flex-col gap-1 dark:border-gray-600"
+        :class="i === 0 ? '' : 'mt-1'"
+      >
+        <div class="text-sm text-gray-500 font-medium">
+          {{ key }}
+        </div>
         <VFormField
           v-slot="{ id }"
-          label="Channels"
-          label-class="w-20"
+          label="Field"
+          label-class="w-16"
         >
-          <VMenuMultiSelect
+          <input
             :id="id"
-            :value="Object.keys(mark.encode)"
-            :options="encodeChannels"
-            @update:value="updateChannel"
+            :value="d?.field"
+            class="w-40"
+            placeholder="field"
+            required
+            input-area
+            @input="updateChannelField(key as string, ($event.target as HTMLInputElement).value)"
+          >
+        </VFormField>
+        <VFormField
+          v-slot="{ id }"
+          label="Measure"
+          label-class="w-16"
+        >
+          <VMenu
+            :id="id"
+            :value="d?.type ?? MeasurementType.Quantitative"
+            :options="measurementTypes"
+            @update:value="updateChannelType(key as string, $event)"
           />
         </VFormField>
-        <div
-          v-if="Object.entries(mark.encode).length !== 0"
-          class="p-2 border rounded gap-2"
-          flex="~ col"
-        >
-          <div
-            v-for="([key, d], i) in Object.entries(mark.encode)"
-            :key="i"
-            flex="~ col gap-1"
-          >
-            <div
-              v-if="i !== 0"
-              class="border-t"
-            />
-            <div class="text-sm flex gap-1 items-center">
-              <span class="text-gray-500">Channel</span>
-              <div fixed-value-container>
-                {{ key }}
-              </div>
-            </div>
-            <VFormField
-              v-slot="{ id }"
-              label="Field"
-              label-class="w-16"
-            >
-              <input
-                :id="id"
-                :value="d?.field"
-
-                class="w-full"
-                placeholder="field"
-                required input-area
-                @input="updateChannelField(key as string, ($event.target as HTMLInputElement).value)"
-              >
-            </VFormField>
-            <VFormField
-              v-slot="{ id }"
-              label="Measure"
-              label-class="w-16"
-            >
-              <VMenu
-                :id="id"
-                :value="d?.type ?? MeasurementType.Quantitative"
-                :options="measurementTypes"
-                @update:value="updateChannelType(key as string, $event)"
-              />
-            </VFormField>
-          </div>
-        </div>
       </div>
     </VCollapseSection>
   </div>

@@ -21,8 +21,8 @@ const multilabelValuesForSelected = async (page: import('@playwright/test').Page
 test.describe('annotate smokes', () => {
   test('loads annotate view with image overlay canvas', async ({ page }) => {
     await openAnnotateApp(page)
-    await expect(page.getByText('Tools')).toBeVisible()
-    await expect(page.getByText('Spans')).toBeVisible()
+    await expect(page.getByText('Draw', { exact: true })).toBeVisible()
+    await expect(page.getByText('Objects', { exact: true })).toBeVisible()
     await expect(page.getByText('Progress')).toBeVisible()
     await expect(page.locator('[data-testid="chart-stage"] canvas').first()).toBeVisible()
   })
@@ -70,7 +70,7 @@ test.describe('annotate smokes', () => {
     await page.mouse.click(box.x + box.width * 0.55, box.y + box.height * 0.55)
 
     await expect.poll(async () => spans.count()).toBe(1)
-    await expect(spans.first()).toContainText('Rect')
+    await expect(spans.first()).toContainText('Shape Rect')
   })
 
   test('toggling multilabel tags selects Vis', async ({ page }) => {
@@ -86,14 +86,16 @@ test.describe('annotate smokes', () => {
     await expect.poll(async () => multilabelValuesForSelected(page)).toContain('Vis')
   })
 
-  test('next entry marks current image labeled and advances', async ({ page }) => {
+  test('next entry advances without inventing labeled status', async ({ page }) => {
     await openAnnotateApp(page)
     const labeled = page.getByTestId('progress-labeled-count')
     const before = Number(await labeled.textContent())
+    // Seed data already has detections/tags on almost all entries.
+    expect(before).toBeGreaterThan(0)
 
     await page.getByTestId('nav-next').click()
 
-    await expect(labeled).toHaveText(String(before + 1))
+    await expect(labeled).toHaveText(String(before))
     await expect(page.getByTestId('nav-previous')).toBeEnabled()
   })
 

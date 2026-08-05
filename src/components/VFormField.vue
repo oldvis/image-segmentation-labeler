@@ -18,7 +18,7 @@ const controlId = useId()
     >
       {{ label }}
     </label>
-    <div class="grow min-w-0">
+    <div class="flex min-w-0 items-center">
       <slot :id="controlId" />
     </div>
   </div>

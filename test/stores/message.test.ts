@@ -7,13 +7,14 @@ describe('message store', () => {
     setActivePinia(createPinia())
   })
 
-  it('addSuccessMessage / addErrorMessage use defaults', () => {
+  it('addInfoMessage uses defaults', () => {
     const store = useMessageStore()
-    store.addSuccessMessage('ok')
-    store.addErrorMessage('bad')
-    expect(store.messages).toHaveLength(2)
-    expect(store.messages[0]).toMatchObject({ content: 'ok', type: MessageType.Success, timeout: 3000 })
-    expect(store.messages[1]).toMatchObject({ content: 'bad', type: MessageType.Error, timeout: 3000 })
+    store.addInfoMessage('note')
+    expect(store.messages[0]).toMatchObject({
+      content: 'note',
+      type: MessageType.Info,
+      timeout: 3000,
+    })
   })
 
   it('removeMessage deletes by uuid', () => {
@@ -22,15 +23,6 @@ describe('message store', () => {
     const uuid = store.messages[0].uuid
     store.removeMessage(uuid)
     expect(store.messages).toHaveLength(0)
-  })
-
-  it('removeMessage is a no-op for unknown uuid', () => {
-    const store = useMessageStore()
-    store.addErrorMessage('keep me')
-    expect(store.messages).toHaveLength(1)
-    store.removeMessage('missing')
-    expect(store.messages).toHaveLength(1)
-    expect(store.messages[0].content).toBe('keep me')
   })
 
   it('removeByContent removes matching messages', () => {

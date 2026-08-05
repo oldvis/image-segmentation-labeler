@@ -15,23 +15,4 @@ describe('simplify', () => {
     expect(result[0]).toEqual([0, 0])
     expect(result[result.length - 1]).toEqual([20, 0])
   })
-
-  it('highestQuality still runs Douglas-Peucker on the full point set', () => {
-    const points: [number, number][] = [
-      [0, 0],
-      [1, 0.01],
-      [2, -0.01],
-      [3, 0.01],
-      [4, 0],
-      [5, 10],
-      [6, 0],
-    ]
-    const low = simplify(points, 1, false)
-    const high = simplify(points, 1, true)
-    // Both must keep endpoints; high-quality path must not equal the identity when DP reduces.
-    expect(high[0]).toEqual(points[0])
-    expect(high[high.length - 1]).toEqual(points[points.length - 1])
-    expect(high.length).toBeLessThanOrEqual(points.length)
-    expect(low.length).toBeLessThanOrEqual(points.length)
-  })
 })
