@@ -2,22 +2,25 @@
 import { storeToRefs } from 'pinia'
 import { saveJsonFile, uploadJsonFile } from '~/plugins/file'
 import {
-  AnnotationType,
-  Category,
   parseUploadedAnnotations,
-  StatusType,
   useStore as useAnnotationStore,
 } from '~/stores/annotation'
+import { StatusType } from '~/stores/annotation/types'
 import { useStore as useMessageStore } from '~/stores/message'
 
 const annotationStore = useAnnotationStore()
-const { annotations, statuses, dataObjects } = storeToRefs(annotationStore)
+const {
+  annotations,
+  statuses,
+  dataObjects,
+  labeledCount,
+  unsureTaggedCount,
+  confidentTaggedCount,
+} = storeToRefs(annotationStore)
 const { addErrorMessage, addSuccessMessage } = useMessageStore()
 
-/** Labeled = has shape/chart detections or non-empty image tags. */
-const nLabeled = computed(() => (
-  dataObjects.value.filter((d) => annotationStore.isLabeled(d.uuid)).length
-))
+/** Labeled = has shape/chart detections or non-empty image tags (O(1)). */
+const nLabeled = computed(() => labeledCount.value)
 const nSkipped = computed(() => (
   statuses.value.filter((d) => (
     d.value === StatusType.Skipped && !annotationStore.isLabeled(d.uuid)
@@ -27,16 +30,8 @@ const nUnlabeled = computed(() => (
   Math.max(0, dataObjects.value.length - nLabeled.value - nSkipped.value)
 ))
 
-/** Entries whose image tags include the given multilabel value. */
-const countTagged = (tag: Category): number => (
-  annotations.value.reduce((n, annotation) => {
-    if (annotation.type !== AnnotationType.MultilabelClassification) return n
-    return annotation.value.includes(tag) ? n + 1 : n
-  }, 0)
-)
-
-const nUnsure = computed(() => countTagged(Category.Unsure))
-const nConfident = computed(() => countTagged(Category.Confident))
+const nUnsure = computed(() => unsureTaggedCount.value)
+const nConfident = computed(() => confidentTaggedCount.value)
 
 const save = (): void => {
   saveJsonFile(annotations.value, 'annotation.json')

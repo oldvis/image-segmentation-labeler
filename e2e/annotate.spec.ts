@@ -1,22 +1,9 @@
 import { expect, test } from '@playwright/test'
-import { openAnnotateApp } from './helpers/app'
-
-const multilabelValuesForSelected = async (page: import('@playwright/test').Page): Promise<string[]> => {
-  return page.evaluate(() => {
-    const raw = window.localStorage.getItem('annotation')
-    if (!raw) return []
-    const ann = JSON.parse(raw) as {
-      selectedDataObjects: Array<{ uuid: string }>
-      annotations: Array<{ type: string, subject: string, value: string[] }>
-    }
-    const subject = ann.selectedDataObjects[0]?.uuid
-    if (!subject) return []
-    const ml = ann.annotations.find((d) => (
-      d.type === 'MultilabelClassification' && d.subject === subject
-    ))
-    return ml?.value ?? []
-  })
-}
+import {
+  clearSelectedSubjectCharts,
+  multilabelValuesForSelected,
+  openAnnotateApp,
+} from './helpers/app'
 
 test.describe('annotate smokes', () => {
   test('loads annotate view with image overlay canvas', async ({ page }) => {
@@ -33,33 +20,7 @@ test.describe('annotate smokes', () => {
     const spans = page.getByTestId('span-card')
     // Seed data already includes spans; clear them so clicks hit the empty stage
     // (ClickCreateRect only records the first point when the stage itself is the target).
-    // Build a cleared annotation snapshot, then force it via initScript after reload
-    // (Pinia may overwrite localStorage during page unload).
-    const payload = await page.evaluate(() => {
-      const raw = window.localStorage.getItem('annotation')
-      if (!raw) return null
-      const ann = JSON.parse(raw) as {
-        dataObjects: Array<{ uuid: string }>
-        selectedDataObjects: Array<{ uuid: string }>
-        selectedAnnotations: unknown[]
-        annotations: Array<{ type: string, subject: string }>
-      }
-      const subject = ann.selectedDataObjects[0]?.uuid ?? ann.dataObjects[0]?.uuid
-      ann.annotations = ann.annotations.filter((d) => !(
-        d.type === 'Chart' && d.subject === subject
-      ))
-      ann.selectedAnnotations = []
-      // Keep current image selected after reload.
-      ann.selectedDataObjects = ann.dataObjects.slice(0, 1)
-      return JSON.stringify(ann)
-    })
-    expect(payload).toBeTruthy()
-
-    await page.addInitScript((data) => {
-      window.localStorage.setItem('annotation', data as string)
-    }, payload)
-    await page.reload()
-    await page.getByTestId('chart-stage').waitFor({ state: 'visible' })
+    await clearSelectedSubjectCharts(page)
     await expect(spans).toHaveCount(0)
 
     const stage = page.getByTestId('chart-stage')
@@ -76,7 +37,8 @@ test.describe('annotate smokes', () => {
   test('toggling multilabel tags selects Vis', async ({ page }) => {
     await openAnnotateApp(page)
     // Seed already includes Vis for the first image; toggle off then on.
-    const vis = page.getByRole('button', { name: 'Vis', exact: true })
+    // Use testid — accessible name is the tip string, not "Vis".
+    const vis = page.getByTestId('tag-Vis')
     await expect.poll(async () => multilabelValuesForSelected(page)).toContain('Vis')
 
     await vis.click()

@@ -8,27 +8,34 @@ import { useStore as useAnnotationStore } from '~/stores/annotation'
  * The wrapped annotation store that exposes
  * the relevant states and actions in the global annotation store.
  * Return the annotations and categories of the given annotation type.
+ *
+ * Filters via per-subject index (not a full-list scan) so Objects / tools
+ * stay fast when the flat export list is large.
  */
 export const useAnnotations = (annotationType: MaybeRef<AnnotationType>) => {
   const store = useAnnotationStore()
   const {
-    annotations,
+    annotationsBySubject,
     categories,
     selectedAnnotations,
     selectedDataObjects,
     categoryToColor,
   } = storeToRefs(store)
-  const selectedDataObjectUuids = computed(() => (
-    new Set(selectedDataObjects.value.map((d) => d.uuid))
-  ))
 
   // The annotations assigned to the currently selected data objects
   // with the given annotation type.
-  const annotationsFiltered = computed(() => (
-    annotations.value
-      .filter((d) => (selectedDataObjectUuids.value.has(d.subject)))
-      .filter((d) => d.type === unref(annotationType))
-  ))
+  const annotationsFiltered = computed(() => {
+    const type = unref(annotationType)
+    const out: Annotation[] = []
+    for (const dataObject of selectedDataObjects.value) {
+      const rows = annotationsBySubject.value[dataObject.uuid]
+      if (rows === undefined) continue
+      for (const annotation of rows) {
+        if (annotation.type === type) out.push(annotation)
+      }
+    }
+    return out
+  })
 
   // The categories relevant to the given annotation type.
   const categoriesFiltered = computed(() => (

@@ -243,4 +243,66 @@ describe('annotation store', () => {
     expect(store.isLabeled('img-2')).toBe(false)
     expect(store.selectedAnnotations).toEqual([])
   })
+
+  it('exposes O(1) labeled / Unsure / Confident progress counts', () => {
+    const store = useAnnotationStore()
+    store.setAnnotations([])
+    expect(store.labeledCount).toBe(0)
+    expect(store.unsureTaggedCount).toBe(0)
+    expect(store.confidentTaggedCount).toBe(0)
+
+    store.add({
+      type: AnnotationType.MultilabelClassification,
+      subject: 'img-1',
+      value: ['Vis', 'Unsure'],
+    })
+    expect(store.labeledCount).toBe(1)
+    expect(store.unsureTaggedCount).toBe(1)
+    expect(store.confidentTaggedCount).toBe(0)
+
+    store.add({
+      type: AnnotationType.MultilabelClassification,
+      subject: 'img-2',
+      value: ['Confident'],
+    })
+    expect(store.labeledCount).toBe(2)
+    expect(store.confidentTaggedCount).toBe(1)
+
+    const uuid = store.annotations.find((d) => d.subject === 'img-1')!.uuid
+    store.remove(uuid)
+    expect(store.labeledCount).toBe(1)
+    expect(store.unsureTaggedCount).toBe(0)
+    expect(store.isLabeled('img-1')).toBe(false)
+  })
+
+  it('keeps isLabeled / progress counts fast on a large flat list', () => {
+    const store = useAnnotationStore()
+    const charts = Array.from({ length: 8_000 }, (_, i) => (
+      makeChartAnnotation({
+        uuid: `chart-${i}`,
+        subject: i % 2 === 0 ? 'img-1' : 'img-2',
+      })
+    ))
+    store.setAnnotations(charts)
+
+    const t0 = performance.now()
+    for (let i = 0; i < 2_000; i += 1) {
+      expect(store.isLabeled('img-1')).toBe(true)
+      expect(store.labeledCount).toBe(2)
+    }
+    const elapsed = performance.now() - t0
+    expect(elapsed).toBeLessThan(50)
+
+    store.add({
+      type: AnnotationType.MultilabelClassification,
+      subject: 'img-1',
+      value: ['Unsure'],
+    })
+    expect(store.unsureTaggedCount).toBe(1)
+
+    const t1 = performance.now()
+    store.remove('chart-0')
+    expect(performance.now() - t1).toBeLessThan(20)
+    expect(store.annotations.find((d) => d.uuid === 'chart-0')).toBeUndefined()
+  })
 })

@@ -12,11 +12,11 @@ describe('useAnnotations', () => {
   it('filters annotations by selected subject and type', () => {
     const store = useAnnotationStore()
     const img1 = makeDataObject('img-1')
-    store.annotations = [
+    store.setAnnotations([
       makeChartAnnotation({ uuid: 'c1', subject: 'img-1' }),
       makeChartAnnotation({ uuid: 'c2', subject: 'img-2' }),
       makeMultilabelAnnotation({ uuid: 'm1', subject: 'img-1' }),
-    ]
+    ])
     store.selectedDataObjects = [img1]
 
     const { annotations, categories } = useAnnotations(AnnotationType.Chart)
@@ -28,7 +28,7 @@ describe('useAnnotations', () => {
   it('select / isSelected manage selectedAnnotations', () => {
     const store = useAnnotationStore()
     const ann = makeChartAnnotation({ uuid: 'c1', subject: 'img-1' })
-    store.annotations = [ann]
+    store.setAnnotations([ann])
     store.selectedDataObjects = [makeDataObject('img-1')]
     const api = useAnnotations(AnnotationType.Chart)
 
