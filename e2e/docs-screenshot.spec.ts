@@ -47,12 +47,13 @@ test('capture annotate overview for README', async ({ page }) => {
 
   // Drop seed annotator identities so the public README shot has no real names.
   // Playwright serializes this callback — keep the body free of TS syntax.
+  // Use setAnnotations so annotationsBySubject (Objects panel) rebuilds too.
   await page.evaluate(`(() => {
     const el = document.querySelector('#app')
     const vueApp = el && el.__vue_app__
     const store = vueApp?.config?.globalProperties?.$pinia?._s?.get('annotation')
     if (!store) throw new Error('annotation store not found')
-    store.annotations = store.annotations.map((d) => ({ ...d, user: null }))
+    store.setAnnotations(store.annotations.map((d) => ({ ...d, user: null })))
   })()`)
   await expect(page.getByText('Last modified by')).toHaveCount(0)
   await new Promise((r) => setTimeout(r, 1500))

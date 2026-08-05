@@ -8,6 +8,7 @@ export default antfu(
     pnpm: true,
     ignores: [
       'src/**/*.json',
+      'e2e/fixtures/**',
       'shims.d.ts',
       'onelabeler.d.ts',
       'test-results/**',

@@ -1,0 +1,30 @@
+[
+  {
+    "type": "MultilabelClassification",
+    "uuid": "e2e-ml-1",
+    "subject": "3fbbcb0a-9d01-51b0-aa57-76e406c6f1f1",
+    "user": null,
+    "time": "2024-01-01T00:00:00.000Z",
+    "value": ["Vis"]
+  },
+  {
+    "type": "Chart",
+    "uuid": "e2e-chart-1",
+    "subject": "3ad6fa67-0d8f-5c7a-a02b-f01581f0b483",
+    "user": null,
+    "time": "2024-01-01T00:00:00.000Z",
+    "value": {
+      "shape": "Rect",
+      "points": [[10, 10], [10, 40], [50, 40], [50, 10]],
+      "chart": {
+        "marks": [
+          {
+            "schema": "Tabular",
+            "type": "Rect",
+            "encode": {}
+          }
+        ]
+      }
+    }
+  }
+]

@@ -1,26 +1,85 @@
 import { saveAs } from 'file-saver'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { parseJsonFile, saveJsonFile } from '~/plugins/file'
+import { saveJsonFile, uploadJsonFile } from '~/plugins/file'
 
 vi.mock('file-saver', () => ({
   saveAs: vi.fn(),
 }))
 
-describe('file helpers', () => {
+const mockFileInput = () => {
+  const click = vi.fn()
+  const input = {
+    type: '',
+    accept: '',
+    multiple: true,
+    webkitdirectory: false,
+    value: '',
+    files: null as FileList | null,
+    click,
+    onchange: null as ((e: Event) => void) | null,
+    oncancel: null as (() => void) | null,
+  }
+  const createElement = vi.spyOn(document, 'createElement').mockReturnValue(
+    input as unknown as HTMLInputElement,
+  )
+  return { input, click, createElement }
+}
+
+describe('file plugin', () => {
   beforeEach(() => {
-    vi.mocked(saveAs).mockClear()
+    vi.mocked(saveAs).mockReset()
   })
 
-  it('parseJsonFile reads JSON text', async () => {
-    const file = new File([JSON.stringify({ a: 1 })], 'a.json', { type: 'application/json' })
-    await expect(parseJsonFile(file)).resolves.toEqual({ a: 1 })
-  })
-
-  it('saveJsonFile stringifies and saves a blob', () => {
-    saveJsonFile({ hello: 'world' }, 'out.json')
+  it('saveJsonFile stringifies data and saves a blob', () => {
+    saveJsonFile({ hello: 'world' }, 'annotation.json')
     expect(saveAs).toHaveBeenCalledTimes(1)
     const [blob, filename] = vi.mocked(saveAs).mock.calls[0]
-    expect(filename).toBe('out.json')
+    expect(filename).toBe('annotation.json')
     expect(blob).toBeInstanceOf(Blob)
+    expect((blob as Blob).type).toBe('application/json')
+  })
+
+  it('uploadJsonFile sets accept and resolves null on cancel', async () => {
+    const { input, click, createElement } = mockFileInput()
+
+    const pending = uploadJsonFile()
+    expect(input.type).toBe('file')
+    expect(input.accept).toBe('application/json,.json')
+    expect(input.multiple).toBe(false)
+    expect(click).toHaveBeenCalledTimes(1)
+
+    input.oncancel?.()
+    await expect(pending).resolves.toBeNull()
+
+    createElement.mockRestore()
+  })
+
+  it('uploadJsonFile parses the selected JSON file', async () => {
+    const { input, createElement } = mockFileInput()
+    const payload = [{ type: 'MultilabelClassification', value: ['Vis'] }]
+    const file = new File([JSON.stringify(payload)], 'annotation.json', {
+      type: 'application/json',
+    })
+
+    const pending = uploadJsonFile()
+    input.onchange?.({
+      target: { files: [file] },
+    } as unknown as Event)
+
+    await expect(pending).resolves.toEqual(payload)
+    createElement.mockRestore()
+  })
+
+  it('uploadJsonFile rejects invalid JSON', async () => {
+    const { input, createElement } = mockFileInput()
+    const file = new File(['{'], 'bad.json', { type: 'application/json' })
+
+    const pending = uploadJsonFile()
+    input.onchange?.({
+      target: { files: [file] },
+    } as unknown as Event)
+
+    await expect(pending).rejects.toThrow()
+    createElement.mockRestore()
   })
 })

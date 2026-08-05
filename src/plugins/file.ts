@@ -1,3 +1,4 @@
+import { useFileDialog } from '@vueuse/core'
 import { saveAs } from 'file-saver'
 
 export const saveJsonFile = (data: unknown, filename: string): void => {
@@ -6,7 +7,7 @@ export const saveJsonFile = (data: unknown, filename: string): void => {
   saveAs(blob, filename)
 }
 
-export const parseJsonFile = (file: File): Promise<unknown> => (
+const parseJsonFile = (file: File): Promise<unknown> => (
   new Promise((resolve, reject) => {
     const reader = new FileReader()
     reader.onload = (event) => {
@@ -23,24 +24,36 @@ export const parseJsonFile = (file: File): Promise<unknown> => (
   })
 )
 
-export const uploadJsonFile = () => (
-  new Promise<unknown | null>((resolve, reject) => {
-    const input = document.createElement('input')
-    input.type = 'file'
-    input.accept = 'application/json,.json'
-    input.onchange = async (e) => {
+/** Open a JSON file picker. Resolves `null` when the user cancels. */
+export const uploadJsonFile = (): Promise<unknown> => {
+  const { open, onChange, onCancel } = useFileDialog({
+    accept: 'application/json,.json',
+    multiple: false,
+    reset: true,
+  })
+
+  return new Promise((resolve, reject) => {
+    let settled = false
+
+    onCancel(() => {
+      if (settled) return
+      settled = true
+      resolve(null)
+    })
+
+    onChange(async (files) => {
+      const file = files?.[0]
+      // `reset: true` may emit `null` before the dialog opens; ignore that.
+      if (!file || settled) return
+      settled = true
       try {
-        const target = e.target as HTMLInputElement
-        if (target.files === null || target.files.length === 0) {
-          resolve(null)
-          return
-        }
-        resolve(await parseJsonFile(target.files[0]))
+        resolve(await parseJsonFile(file))
       }
       catch (error) {
         reject(error)
       }
-    }
-    input.click()
+    })
+
+    open()
   })
-)
+}
