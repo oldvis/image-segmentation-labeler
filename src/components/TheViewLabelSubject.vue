@@ -165,10 +165,10 @@ watch(shown, () => {
             type="button"
             btn-secondary
             data-testid="nav-first-unlabeled"
-            title="Go to First Unlabeled"
+            title="Go to first unlabeled"
             @click="gotoUnlabeled"
           >
-            Go to First Unlabeled
+            Go to first unlabeled
           </button>
         </div>
         <span class="strip-meta ml-auto">
@@ -178,9 +178,9 @@ watch(shown, () => {
     </div>
     <div
       v-else
-      class="text-xl m-auto"
+      class="text-sm text-gray-500 m-auto p-3 dark:text-gray-400"
     >
-      No Entries Matched
+      No entries matched
     </div>
   </div>
 </template>

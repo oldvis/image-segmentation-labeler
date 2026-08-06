@@ -66,7 +66,7 @@ const upload = async (): Promise<void> => {
     </div>
     <div class="strip-meta flex grow flex-wrap gap-x-1.5 gap-y-1 min-w-0 items-center">
       <span>
-        Labeled
+        labeled
         <span
           strip-meta-em
           data-testid="progress-labeled-count"
@@ -79,7 +79,7 @@ const upload = async (): Promise<void> => {
         aria-hidden="true"
       >·</span>
       <span>
-        Unlabeled
+        unlabeled
         <span strip-meta-em>{{ nUnlabeled }}</span>
       </span>
       <span
@@ -87,7 +87,7 @@ const upload = async (): Promise<void> => {
         aria-hidden="true"
       >·</span>
       <span>
-        Skipped
+        skipped
         <span strip-meta-em>{{ nSkipped }}</span>
       </span>
       <span
@@ -95,7 +95,7 @@ const upload = async (): Promise<void> => {
         aria-hidden="true"
       >|</span>
       <span>
-        Unsure
+        unsure
         <span
           strip-meta-em
           data-testid="progress-unsure-count"
@@ -106,7 +106,7 @@ const upload = async (): Promise<void> => {
         aria-hidden="true"
       >·</span>
       <span>
-        Confident
+        confident
         <span
           strip-meta-em
           data-testid="progress-confident-count"
